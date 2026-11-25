@@ -1,6 +1,12 @@
 {
   "name": "docksite",
   "version": "1.0.0",
+  "description": "A server-rendered multi-tool platform with an independent CMS and URL shortener, built with Express, EJS, and SQLite.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gsor56/Docksite.git"
+  },
   "private": true,
   "type": "module",
   "engines": {

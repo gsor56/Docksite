@@ -1,33 +1,37 @@
 # Later deployment guide
 
-This guide describes future phases. No DNS configuration, remote repository, or deployment is performed by the local setup.
+Source repository: [gsor56/Docksite](https://github.com/gsor56/Docksite). DNS configuration and server deployment remain future phases.
 
 ## Phase 2: GitHub
 
-After local checks pass, inspect the local repository and ensure environment files, SQLite files, uploaded media, and dependencies are ignored:
+The private repository uses the `main` branch and the MIT license. Authenticate through GitHub CLI or your Git credential manager before cloning:
+
+```powershell
+git clone https://github.com/gsor56/Docksite.git
+cd Docksite
+npm ci
+npm run configure
+npm run migrate
+```
+
+For later updates, inspect the changes, run local checks, and ensure environment files, SQLite files, uploaded media, and dependencies remain ignored:
 
 ```powershell
 git status
-git log -1 --oneline
-git ls-files
+npm test
+npm run lint
+npm run format:check
 ```
 
-After you explicitly approve remote creation, install/authenticate GitHub CLI and replace `YOUR_ACCOUNT` with your account or organization:
+After authorizing the update, commit and push:
 
 ```powershell
-gh auth login
-gh repo create YOUR_ACCOUNT/docksite --private --source . --remote origin --push
-```
-
-Alternatively, create an empty repository through GitHub, then run:
-
-```powershell
-git remote add origin https://github.com/YOUR_ACCOUNT/docksite.git
-git branch -M main
+git add --all
+git commit -m "Describe the change"
 git push -u origin main
 ```
 
-Review repository visibility before creation. These are future commands, not commands to run automatically. Configure your actual Git identity before subsequent commits if the initial commit used a local project identity.
+Do not change repository visibility or push new updates automatically without authorization. Configure your actual Git identity before subsequent commits if the initial commit used a local project identity. Keep GitHub tokens in private environment files or a credential manager, never in source files or remote URLs.
 
 ## Phase 3: DPDNS
 

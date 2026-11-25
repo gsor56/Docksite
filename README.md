@@ -149,4 +149,8 @@ Tests use Node's native test runner, actual local HTTP servers, and disposable d
 
 V1 uses local SQLite and one implemented tool. Rate-limit counters are in memory per process; multi-instance deployments need a shared limiter. There is no email verification, password recovery, automated moderation, link malware scanning, billing, cross-host media storage, or multi-host database replication. CMS analytics/activity lists show recent records, and media management is intentionally minimal.
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for later GitHub, DNS, proxy, HTTPS, persistence, and Wispbyte steps. Phase 1 does not create a remote repository or deploy anything.
+Source repository: [gsor56/Docksite](https://github.com/gsor56/Docksite). See [DEPLOYMENT.md](DEPLOYMENT.md) for GitHub updates, DNS, proxy, HTTPS, persistence, and Wispbyte steps. DNS and server deployment are not configured.
+
+## License
+
+Docksite is licensed under the [MIT License](LICENSE).
