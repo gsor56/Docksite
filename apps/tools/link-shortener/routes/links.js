@@ -1,0 +1,18 @@
+import { Router } from 'express';
+import { config } from '@docksite/config';
+import { requireUser } from '@docksite/auth/roles';
+import { formLimit } from '@docksite/auth/rate-limit';
+import * as links from '../controllers/links.js';
+const router = Router();
+router.get('/', links.index);
+router.get('/dashboard', requireUser, links.index);
+router.get('/links/new', requireUser, links.newPage);
+router.post('/links', requireUser, formLimit(config.LINK_CREATE_RATE_MAX), links.create);
+router.get('/links/:id', requireUser, links.detail);
+router.get('/links/:id/edit', requireUser, links.editPage);
+router.post('/links/:id', requireUser, formLimit(60), links.update);
+router.post('/links/:id/disable', requireUser, links.disable);
+router.post('/links/:id/delete', requireUser, links.remove);
+router.get('/links/:id/qr.png', requireUser, links.qr);
+router.post('/api/links/:id/share', requireUser, formLimit(60), links.share);
+export default router;

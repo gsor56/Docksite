@@ -1,0 +1,13 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<section class="narrow">
+<h1>Settings</h1>
+<form class="card stack" method="post" action="<%= basePath %>/settings">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<label class="label">Platform name<input class="input" name="platform_name" value="<%= name %>" required maxlength="80">
+</label>
+<button class="btn">Save settings</button>
+</form>
+<p class="muted">Domains, ports, security secrets, and storage paths are configured through environment variables.</p>
+</section>
+<%- include('partials/footer') %>

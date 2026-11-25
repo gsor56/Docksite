@@ -1,0 +1,14 @@
+{
+  "name": "@docksite/utils",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./*": "./*.js"
+  },
+  "dependencies": {
+    "@docksite/config": "*",
+    "@docksite/db": "*"
+  }
+}

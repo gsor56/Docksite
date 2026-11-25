@@ -1,0 +1,30 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<section class="narrow">
+<h1>Submit a tool idea</h1>
+<p>Describe the service you want to build. An administrator will review your submission.</p>
+<% if (!user) { %>
+<div class="alert">
+<a href="/login">Login</a> or <a href="/register">register</a> to submit an idea.</div>
+<% } else { %>
+<form class="card stack" method="post" action="/build">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<label class="label">Title<input class="input" name="title" required minlength="3" maxlength="120">
+</label>
+<label class="label">Idea<textarea class="input" name="idea" required minlength="20" maxlength="5000">
+</textarea>
+</label>
+<label class="label">Category<select class="input" name="category_id">
+<option value="">Uncategorized</option>
+<% for (const category of categories) { %>
+<option value="<%= category.id %>">
+<%= category.name %>
+</option>
+<% } %>
+</select>
+</label>
+<button class="btn">Submit for review</button>
+</form>
+<% } %>
+</section>
+<%- include('partials/footer') %>

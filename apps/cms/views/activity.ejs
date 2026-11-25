@@ -1,0 +1,47 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<h1>Activity log</h1>
+<p class="muted">Latest 200 administrative actions.</p>
+<% if (!entries.length) { %>
+<div class="empty-state">No activity recorded.</div>
+<% } else { %>
+<div class="table-wrap">
+<table class="table">
+<thead>
+<tr>
+<th>Actor</th>
+<th>Action</th>
+<th>Entity</th>
+<th>Metadata</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<% for (const entry of entries) { %>
+<tr>
+<td>
+<%= entry.username || 'Deleted account' %>
+</td>
+<td>
+<code>
+<%= entry.action %>
+</code>
+</td>
+<td>
+<%= entry.entity_type %> #<%= entry.entity_id || '—' %>
+</td>
+<td class="break">
+<code>
+<%= entry.metadata %>
+</code>
+</td>
+<td class="metadata">
+<%= entry.created_at %>
+</td>
+</tr>
+<% } %>
+</tbody>
+</table>
+</div>
+<% } %>
+<%- include('partials/footer') %>

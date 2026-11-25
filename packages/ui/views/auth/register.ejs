@@ -1,0 +1,21 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<section class="narrow">
+<h1>Create account</h1>
+<% if (!ownerReady) { %>
+<div class="alert">Registration opens after the owner completes setup.</div>
+<% } else { %>
+<form method="post" action="<%= basePath %>/register" class="card stack">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<label class="label">Username<input class="input" name="username" autocomplete="username" required minlength="3" maxlength="32" pattern="[a-zA-Z0-9_-]+">
+</label>
+<label class="label">Email<input class="input" type="email" name="email" autocomplete="email" required maxlength="254">
+</label>
+<label class="label">Password<input class="input" type="password" name="password" autocomplete="new-password" required minlength="12" maxlength="72">
+<span class="muted">At least 12 characters; at most 72 UTF-8 bytes.</span>
+</label>
+<button class="btn">Create account</button>
+</form>
+<% } %>
+</section>
+<%- include('partials/footer') %>

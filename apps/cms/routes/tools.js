@@ -1,0 +1,14 @@
+import { Router } from 'express';
+import * as tools from '../controllers/tools.js';
+import { adminAccess } from '../middleware/access.js';
+import { formLimit } from '@docksite/auth/rate-limit';
+const router = Router();
+router.get('/tools', tools.index);
+router.get('/tools/new', tools.createPage);
+router.post('/tools', formLimit(30), tools.create);
+router.get('/tools/:id', tools.detail);
+router.get('/tools/:id/edit', tools.editPage);
+router.post('/tools/:id', formLimit(60), tools.update);
+router.post('/tools/:id/archive', adminAccess, tools.archive);
+router.post('/tools/:id/delete', tools.remove);
+export default router;

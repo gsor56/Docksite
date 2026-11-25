@@ -1,0 +1,17 @@
+{
+  "name": "@docksite/link-shortener",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@docksite/auth": "*",
+    "@docksite/config": "*",
+    "@docksite/db": "*",
+    "@docksite/ui": "*",
+    "@docksite/utils": "*"
+  }
+}

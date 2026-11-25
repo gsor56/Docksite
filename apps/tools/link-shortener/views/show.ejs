@@ -1,0 +1,68 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<p class="eyebrow">Link #<%= link.id %>
+</p>
+<h1>Short link</h1>
+<div class="card stack">
+<p class="link-code" id="short-url">
+<%= shortUrl %>
+</p>
+<div class="row">
+<button class="btn" id="copy-link" data-url="<%= shortUrl %>" data-endpoint="<%= basePath %>/api/links/<%= link.id %>/share" data-token="<%= csrfToken %>">Copy URL</button>
+<a class="btn btn-secondary" href="<%= basePath %>/links/<%= link.id %>/edit">Edit</a>
+<a class="btn btn-secondary" href="<%= basePath %>/links/<%= link.id %>/qr.png" download="<%= link.code %>.png">Download QR</a>
+</div>
+<p id="copy-status" role="status" aria-live="polite">
+</p>
+<img class="qr" src="<%= basePath %>/links/<%= link.id %>/qr.png" alt="QR code for this short link">
+<p class="break">Destination: <%= link.destination_url %>
+</p>
+<p class="metadata">Clicks: <%= link.click_count %> · Limit: <%= link.click_limit || 'None' %>
+<br>Expiry: <%= link.expires_at || 'None' %>
+<br>Password: <%= link.password_hash ? 'Protected' : 'None' %> · Enabled: <%= link.is_active ? 'Yes' : 'No' %>
+<br>Created: <%= date(link.created_at) %> · Updated: <%= date(link.updated_at) %>
+</p>
+<div class="row">
+<form method="post" action="<%= basePath %>/links/<%= link.id %>/disable">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<button class="btn btn-secondary">Disable</button>
+</form>
+<form method="post" action="<%= basePath %>/links/<%= link.id %>/delete" data-confirm="Delete this link? Its alias will remain reserved.">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<button class="btn btn-secondary danger">Delete</button>
+</form>
+</div>
+</div>
+<section class="section">
+<h2>Click analytics</h2>
+<% if (!clicks.length) { %>
+<div class="empty-state">No clicks recorded.</div>
+<% } else { %>
+<p class="metadata">Latest 100 clicks</p>
+<div class="table-wrap">
+<table class="table">
+<thead>
+<tr>
+<th>Time (UTC)</th>
+<th>Referring origin</th>
+</tr>
+</thead>
+<tbody>
+<% for (const click of clicks) { %>
+<tr>
+<td class="metadata">
+<%= click.created_at %>
+</td>
+<td>
+<%= click.referrer || 'Direct / unavailable' %>
+</td>
+</tr>
+<% } %>
+</tbody>
+</table>
+</div>
+<% } %>
+</section>
+<script src="<%= basePath %>/assets/links.js" defer>
+</script>
+<%- include('partials/footer') %>

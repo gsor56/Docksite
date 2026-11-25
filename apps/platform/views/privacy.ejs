@@ -1,0 +1,18 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<article class="narrow">
+<h1>Privacy</h1>
+<h2>Account and session data</h2>
+<p>We store your username, email address, password hash, role, and account dates. Essential session cookies keep you signed in and protect forms. Passwords are never stored in plaintext.</p>
+<h2>Links and usage</h2>
+<p>We store links you create, their destinations, restrictions, and click totals. Click records include the time, a keyed hash of the network address, a limited browser identifier, and the referring origin when available. We do not store raw network addresses in click analytics. Development server logs are separate from analytics.</p>
+<h2>Uploads and submissions</h2>
+<p>Uploaded files, ownership, file metadata, and optional expiry dates are stored. Submissions and administrator review notes are retained with your account. Uploaded files are accessible only to authorized CMS users.</p>
+<h2>Retention</h2>
+<p>When the scheduled cleanup command runs, it removes detailed analytics older than <%= retention %> days and expired uploads. Aggregate link click counts remain. Deleted short links stop working and retain their reserved alias and history; deleting a link does not reassign its address. Sessions expire automatically.</p>
+<h2>Cookies and third parties</h2>
+<p>Platform and CMS authentication use separate session cookies. There are no advertising trackers or external fonts. QR codes are generated locally. Following a shortened link takes you to the destination website, which has its own privacy policy.</p>
+<h2>Account requests</h2>
+<p>Contact the operator who provided your account or this installation for access, correction, or deletion requests.</p>
+</article>
+<%- include('partials/footer') %>

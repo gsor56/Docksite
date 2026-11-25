@@ -1,0 +1,33 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<h1>Tags</h1>
+<form class="card stack narrow" method="post" action="<%= basePath %>/tags">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<label class="label">Name<input class="input" name="name" required maxlength="80">
+</label>
+<label class="label">Slug<input class="input" name="slug" required maxlength="60">
+</label>
+<button class="btn">Create tag</button>
+</form>
+<section class="section stack">
+<% if (!items.length) { %>
+<div class="empty-state">No tags created.</div>
+<% } %>
+<% for (const item of items) { %>
+<article class="card">
+<form class="stack" method="post" action="<%= basePath %>/tags/<%= item.id %>">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<label class="label">Name<input class="input" name="name" value="<%= item.name %>" required maxlength="80">
+</label>
+<label class="label">Slug<input class="input" name="slug" value="<%= item.slug %>" required maxlength="60">
+</label>
+<button class="btn btn-secondary">Save</button>
+</form>
+<form class="section" method="post" action="<%= basePath %>/tags/<%= item.id %>/delete" data-confirm="Delete this tag?">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<button class="text-button danger">Delete</button>
+</form>
+</article>
+<% } %>
+</section>
+<%- include('partials/footer') %>

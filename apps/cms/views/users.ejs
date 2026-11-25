@@ -1,0 +1,50 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<h1>Users</h1>
+<div class="table-wrap">
+<table class="table">
+<thead>
+<tr>
+<th>User</th>
+<th>Email</th>
+<th>Role and access</th>
+<th>Created</th>
+</tr>
+</thead>
+<tbody>
+<% for (const account of users) { %>
+<tr>
+<td>
+<%= account.username %>
+</td>
+<td>
+<%= account.email %>
+</td>
+<td>
+<form class="row" method="post" action="<%= basePath %>/users/<%= account.id %>">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<label class="label">
+<span class="sr-only">Role for <%= account.username %>
+</span>
+<select class="input" name="role">
+<% for (const role of ['owner','admin','contributor','user']) { %>
+<option value="<%= role %>" <%= account.role === role ? 'selected' : '' %>>
+<%= role %>
+</option>
+<% } %>
+</select>
+</label>
+<label class="check-label">
+<input name="is_active" type="checkbox" <%= account.is_active ? 'checked' : '' %>>Active</label>
+<button class="btn btn-secondary">Save</button>
+</form>
+</td>
+<td>
+<%= date(account.created_at) %>
+</td>
+</tr>
+<% } %>
+</tbody>
+</table>
+</div>
+<%- include('partials/footer') %>

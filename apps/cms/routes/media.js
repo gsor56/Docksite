@@ -1,0 +1,11 @@
+import { Router } from 'express';
+import { upload } from '@docksite/utils/uploads';
+import { verifyCsrf } from '@docksite/auth/csrf';
+import { formLimit } from '@docksite/auth/rate-limit';
+import * as media from '../controllers/media.js';
+const router = Router();
+router.get('/media', media.index);
+router.post('/media', formLimit(20), upload.single('file'), verifyCsrf, media.create);
+router.get('/media/:id/file', media.file);
+router.post('/media/:id/delete', media.remove);
+export default router;

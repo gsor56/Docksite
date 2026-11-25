@@ -1,0 +1,38 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<section class="narrow">
+<h1>
+<%= link ? 'Edit short link' : 'Create short link' %>
+</h1>
+<form class="card stack" action="<%= basePath %>/links<%= link ? '/' + link.id : '' %>" method="post">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<label class="label">Destination URL<input class="input" name="destination_url" type="url" required maxlength="4096" value="<%= link?.destination_url || '' %>">
+</label>
+<% if (!link) { %>
+<label class="label">Custom alias (optional)<input class="input" name="alias" minlength="3" maxlength="40" pattern="[a-zA-Z0-9_-]+">
+<span class="muted">Leave blank to generate a code.</span>
+</label>
+<% } else { %>
+<p class="metadata">Alias: <%= link.code %>
+</p>
+<% } %>
+<label class="label">Expiry (UTC, optional)<input class="input" name="expires_at" type="datetime-local" value="<%= link?.expires_at ? link.expires_at.slice(0,16) : '' %>">
+</label>
+<label class="label">
+<%= link ? 'New password (leave blank to keep current)' : 'Password (optional)' %>
+<input class="input" type="password" name="password" minlength="12" maxlength="72" autocomplete="new-password">
+</label>
+<% if (link?.password_hash) { %>
+<label class="check-label">
+<input type="checkbox" name="remove_password">Remove password protection</label>
+<% } %>
+<label class="label">Click limit (optional)<input class="input" name="click_limit" type="number" min="1" max="2147483647" value="<%= link?.click_limit || '' %>">
+</label>
+<label class="check-label">
+<input type="checkbox" name="is_active" <%= !link || link.is_active ? 'checked' : '' %>>Enabled</label>
+<button class="btn">Save link</button>
+</form>
+</section>
+<script src="<%= basePath %>/assets/links.js" defer>
+</script>
+<%- include('partials/footer') %>

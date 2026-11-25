@@ -1,0 +1,46 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<p class="eyebrow">Tool / <%= tool.slug %>
+</p>
+<h1>
+<%= tool.name %>
+</h1>
+<p>
+<%= tool.tagline %>
+</p>
+<div class="tags">
+<% if (tool.category) { %>
+<a class="tag" href="/categories/<%= tool.category.slug %>">
+<%= tool.category.name %>
+</a>
+<% } %>
+<% for (const tag of tool.tags) { %>
+<a class="tag" href="/tools?tag=<%= tag.slug %>">
+<%= tag.name %>
+</a>
+<% } %>
+</div>
+<div class="section prose">
+<%= tool.description %>
+</div>
+<p class="section">
+<a class="btn" href="<%= tool.url %>">Open <%= tool.name %>
+</a>
+</p>
+<p class="metadata">Created <time datetime="<%= tool.created_at %>">
+<%= date(tool.created_at) %>
+</time> · Updated <time datetime="<%= tool.updated_at %>">
+<%= date(tool.updated_at) %>
+</time>
+</p>
+<% if (related.length) { %>
+<section class="section">
+<h2>Related tools</h2>
+<div class="grid">
+<% for (const relatedTool of related) { %>
+<%- include('partials/tool-card', {tool:relatedTool}) %>
+<% } %>
+</div>
+</section>
+<% } %>
+<%- include('partials/footer') %>

@@ -1,0 +1,18 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<h1>
+<%= category.name %>
+</h1>
+<p>
+<%= category.description %>
+</p>
+<% if (!result.tools.length) { %>
+<div class="empty-state">No tools published in this category yet.</div>
+<% } else { %>
+<div class="grid">
+<% for (const tool of result.tools) { %>
+<%- include('partials/tool-card', {tool}) %>
+<% } %>
+</div>
+<% } %>
+<%- include('partials/footer') %>

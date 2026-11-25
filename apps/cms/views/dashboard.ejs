@@ -1,0 +1,20 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<p class="eyebrow">CMS / <%= user.role %>
+</p>
+<h1>Dashboard</h1>
+<div class="grid">
+<% for (const [key,value] of Object.entries(counts)) { if (value !== null) { %>
+<a class="card" href="<%= basePath %>/<%= key %>">
+<h2>
+<%= key %>
+</h2>
+<p class="metadata">
+<%= value %> records</p>
+</a>
+<% } } %>
+</div>
+<p class="section">
+<a class="btn" href="<%= basePath %>/tools/new">Create tool</a>
+</p>
+<%- include('partials/footer') %>

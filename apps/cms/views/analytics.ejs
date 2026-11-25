@@ -1,0 +1,48 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<h1>Analytics</h1>
+<div class="row">
+<% for (const total of totals) { %>
+<span class="tag">
+<%= total.event %>: <%= total.total %>
+</span>
+<% } %>
+</div>
+<p class="muted">Latest 200 events. Popularity counts real use events, including link creation and redirects.</p>
+<% if (!events.length) { %>
+<div class="empty-state">No analytics events recorded.</div>
+<% } else { %>
+<div class="table-wrap">
+<table class="table">
+<thead>
+<tr>
+<th>Event</th>
+<th>Tool</th>
+<th>Metadata</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<% for (const event of events) { %>
+<tr>
+<td>
+<%= event.event %>
+</td>
+<td>
+<%= event.tool_name || 'Platform' %>
+</td>
+<td class="break">
+<code>
+<%= event.metadata %>
+</code>
+</td>
+<td class="metadata">
+<%= event.created_at %>
+</td>
+</tr>
+<% } %>
+</tbody>
+</table>
+</div>
+<% } %>
+<%- include('partials/footer') %>

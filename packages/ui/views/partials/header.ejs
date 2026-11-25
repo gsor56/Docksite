@@ -1,0 +1,52 @@
+<header class="header">
+  <div class="container header-inner">
+    <a class="brand" href="<%= platformUrl('/') %>" aria-label="<%= platformName %> homepage">
+<%- logo %>
+<span class="sr-only">
+<%= platformName %>
+</span>
+</a>
+    <nav aria-label="Main navigation">
+      <% if (scope === 'cms') { %>
+        <a href="<%= basePath %>/dashboard">CMS</a>
+<a href="<%= basePath %>/tools">Tools</a>
+<a href="<%= basePath %>/media">Media</a>
+        <% if (user && ['owner','admin'].includes(user.role)) { %>
+<a href="<%= basePath %>/categories">Categories</a>
+<a href="<%= basePath %>/tags">Tags</a>
+<a href="<%= basePath %>/submissions">Submissions</a>
+<a href="<%= basePath %>/users">Users</a>
+<a href="<%= basePath %>/analytics">Analytics</a>
+<a href="<%= basePath %>/settings">Settings</a>
+<a href="<%= basePath %>/activity">Activity</a>
+<% } %>
+      <% } else if (scope === 'link') { %>
+        <a href="<%= basePath %>/">Shortener</a>
+<% if (user) { %>
+<a href="<%= basePath %>/dashboard">My links</a>
+<% } %>
+<a href="<%= platformUrl('/tools') %>">Directory</a>
+      <% } else { %>
+        <a href="<%= basePath %>/tools">Tools</a>
+<a href="<%= basePath %>/categories">Categories</a>
+<a href="<%= basePath %>/build">Build</a>
+<% if (user) { %>
+<a href="<%= basePath %>/dashboard">Dashboard</a>
+<% } %>
+      <% } %>
+      <% if (user) { %>
+        <form action="<%= basePath %>/logout" method="post" class="inline-form">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<button class="text-button">Log out</button>
+</form>
+      <% } else { %>
+        <a href="<%= basePath %>/login">Login</a>
+<% if (scope !== 'cms') { %>
+<a href="<%= basePath %>/register">Register</a>
+<% } %>
+      <% } %>
+    </nav>
+  </div>
+</header>
+<main id="main" class="container main">
+<%- include('alerts') %>

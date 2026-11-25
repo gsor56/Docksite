@@ -1,0 +1,66 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<section class="narrow">
+<h1>
+<%= tool ? 'Edit tool' : 'Create tool' %>
+</h1>
+<form class="card stack" method="post" action="<%= basePath %>/tools<%= tool ? '/' + tool.id : '' %>">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<% for (const [name,label,max] of [['name','Name',100],['slug','Slug',60],['tagline','Tagline',180],['subdomain','Subdomain',50]]) { %>
+<label class="label">
+<%= label %>
+<input class="input" name="<%= name %>" value="<%= tool?.[name] || '' %>" required maxlength="<%= max %>">
+</label>
+<% } %>
+<label class="label">Description<textarea class="input" name="description" required minlength="10" maxlength="12000">
+<%= tool?.description || '' %>
+</textarea>
+</label>
+<label class="label">Category<select class="input" name="category_id">
+<option value="">Uncategorized</option>
+<% for (const category of categories) { %>
+<option value="<%= category.id %>" <%= tool?.category_id === category.id ? 'selected' : '' %>>
+<%= category.name %>
+</option>
+<% } %>
+</select>
+</label>
+<label class="label">Implementation<select class="input" name="module_key">
+<option value="">Unassigned</option>
+<option value="link-shortener" <%= tool?.module_key === 'link-shortener' ? 'selected' : '' %>>URL Shortener</option>
+</select>
+</label>
+<label class="label">Status<select class="input" name="status">
+<% for (const status of user.role === 'contributor' ? ['draft','pending'] : ['draft','pending','published','archived']) { %>
+<option value="<%= status %>" <%= tool?.status === status ? 'selected' : '' %>>
+<%= status %>
+</option>
+<% } %>
+</select>
+</label>
+<label class="label">Icon<select class="input" name="icon">
+<% for (const icon of ['link','box','code']) { %>
+<option value="<%= icon %>" <%= tool?.icon === icon ? 'selected' : '' %>>
+<%= icon %>
+</option>
+<% } %>
+</select>
+</label>
+<fieldset>
+<legend class="label">Tags</legend>
+<% if (!tags.length) { %>
+<p class="muted">No tags created.</p>
+<% } %>
+<% for (const tag of tags) { %>
+<label class="check-label">
+<input type="checkbox" name="tags" value="<%= tag.id %>" <%= tool?.tags.some(item => item.id === tag.id) ? 'checked' : '' %>>
+<%= tag.name %>
+</label>
+<% } %>
+</fieldset>
+<label class="check-label">
+<input type="checkbox" name="featured" <%= tool?.featured ? 'checked' : '' %>>Featured</label>
+<button class="btn">Save tool</button>
+</form>
+</section>
+<%- include('partials/footer') %>

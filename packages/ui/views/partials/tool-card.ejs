@@ -1,0 +1,27 @@
+<article class="card tool-card">
+  <div class="row">
+<%- include('icons', { icon: tool.icon }) %>
+<% if (tool.category) { %>
+<a class="tag" href="<%= platformUrl('/categories/' + tool.category.slug) %>">
+<%= tool.category.name %>
+</a>
+<% } %>
+</div>
+  <h3>
+<a href="<%= platformUrl('/tools/' + tool.slug) %>">
+<%= tool.name %>
+</a>
+</h3>
+  <p>
+<%= tool.tagline %>
+</p>
+  <div class="tags">
+<% for (const tag of tool.tags) { %>
+<span class="tag">
+<%= tag.name %>
+</span>
+<% } %>
+</div>
+  <a class="tool-open" href="<%= tool.url %>">Open tool <span aria-hidden="true">↗</span>
+</a>
+</article>

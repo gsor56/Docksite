@@ -1,0 +1,40 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<h1>Categories</h1>
+<form class="card stack narrow" method="post" action="<%= basePath %>/categories">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<label class="label">Name<input class="input" name="name" required maxlength="80">
+</label>
+<label class="label">Slug<input class="input" name="slug" required maxlength="60">
+</label>
+<label class="label">Description<textarea class="input" name="description" maxlength="2000">
+</textarea>
+</label>
+<button class="btn">Create category</button>
+</form>
+<section class="section stack">
+<% if (!items.length) { %>
+<div class="empty-state">No categories created.</div>
+<% } %>
+<% for (const item of items) { %>
+<article class="card">
+<form class="stack" method="post" action="<%= basePath %>/categories/<%= item.id %>">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<label class="label">Name<input class="input" name="name" value="<%= item.name %>" required maxlength="80">
+</label>
+<label class="label">Slug<input class="input" name="slug" value="<%= item.slug %>" required maxlength="60">
+</label>
+<label class="label">Description<textarea class="input" name="description" maxlength="2000">
+<%= item.description %>
+</textarea>
+</label>
+<button class="btn btn-secondary">Save</button>
+</form>
+<form class="section" method="post" action="<%= basePath %>/categories/<%= item.id %>/delete" data-confirm="Delete this category?">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<button class="text-button danger">Delete</button>
+</form>
+</article>
+<% } %>
+</section>
+<%- include('partials/footer') %>

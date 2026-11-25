@@ -1,0 +1,11 @@
+CREATE INDEX sessions_expiration ON sessions(expires_at);
+CREATE INDEX tools_publication ON tools(status, published_at DESC, id DESC);
+CREATE INDEX tools_category ON tools(category_id, status);
+CREATE INDEX tool_tags_tag ON tool_tags(tag_id, tool_id);
+CREATE INDEX submissions_queue ON tool_submissions(status, created_at DESC);
+CREATE INDEX analytics_tool_event ON analytics_events(tool_id, event, created_at);
+CREATE INDEX analytics_created ON analytics_events(created_at);
+CREATE INDEX activity_created ON activity_log(created_at DESC);
+CREATE INDEX media_expiration ON media(expires_at);
+CREATE INDEX short_links_owner ON short_links(user_id, deleted_at, created_at DESC);
+CREATE INDEX short_clicks_link ON short_link_clicks(short_link_id, created_at DESC);

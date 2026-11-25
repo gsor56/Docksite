@@ -1,0 +1,65 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<p class="eyebrow">URL Shortener</p>
+<h1>
+<%= tool.name %>
+</h1>
+<p>
+<%= tool.tagline %>
+</p>
+<% if (!user) { %>
+<p>
+<a class="btn" href="<%= basePath %>/login">Login to create links</a> <a href="<%= basePath %>/register">Create account</a>
+</p>
+<% } else { %>
+<p>
+<a class="btn" href="<%= basePath %>/links/new">Create short link</a>
+</p>
+<section class="section">
+<h2>My links</h2>
+<% if (!links.length) { %>
+<div class="empty-state">You have not created any links.</div>
+<% } else { %>
+<div class="table-wrap">
+<table class="table">
+<thead>
+<tr>
+<th>Short link</th>
+<th>Destination</th>
+<th>Clicks</th>
+<th>State</th>
+<th>Manage</th>
+</tr>
+</thead>
+<tbody>
+<% for (const link of links) { %>
+<tr>
+<td class="break">
+<a class="link-code" href="<%= basePath %>/links/<%= link.id %>">
+<%= shortUrl(link.code) %>
+</a>
+</td>
+<td class="break">
+<%= link.destination_url %>
+</td>
+<td>
+<%= link.click_count %>
+<%= link.click_limit ? '/' + link.click_limit : '' %>
+</td>
+<td>
+<span class="tag">
+<%= !link.is_active ? 'disabled' : link.expires_at && new Date(link.expires_at) <= new Date() ? 'expired' : link.click_limit && link.click_count >= link.click_limit ? 'limit reached' : 'active' %>
+</span>
+</td>
+<td>
+<a href="<%= basePath %>/links/<%= link.id %>/edit">Edit</a>
+</td>
+</tr>
+<% } %>
+</tbody>
+</table>
+</div>
+<% } %>
+</section>
+<% } %>
+<%- include('partials/footer') %>

@@ -1,0 +1,36 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<p class="eyebrow">Tool #<%= tool.id %>
+</p>
+<h1>
+<%= tool.name %>
+</h1>
+<span class="tag">
+<%= tool.status %>
+</span>
+<p>
+<%= tool.tagline %>
+</p>
+<div class="prose">
+<%= tool.description %>
+</div>
+<p class="metadata">Module: <%= tool.module_key || 'unassigned' %> · Subdomain: <%= tool.subdomain %> · Created <%= date(tool.created_at) %> · Updated <%= date(tool.updated_at) %>
+</p>
+<div class="row">
+<a class="btn" href="<%= basePath %>/tools/<%= tool.id %>/edit">Edit</a>
+<% if (tool.status === 'published') { %>
+<a class="btn btn-secondary" href="<%= tool.url %>">Open tool</a>
+<a href="<%= platformUrl('/tools/' + tool.slug) %>">Public page</a>
+<% } %>
+<% if (['owner','admin'].includes(user.role)) { %>
+<form method="post" action="<%= basePath %>/tools/<%= tool.id %>/archive" data-confirm="Archive this tool and stop its public routes?">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<button class="btn btn-secondary">Archive</button>
+</form>
+<% } %>
+<form method="post" action="<%= basePath %>/tools/<%= tool.id %>/delete" data-confirm="Delete this tool? Tools with link records must be archived instead.">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<button class="btn btn-secondary danger">Delete</button>
+</form>
+</div>
+<%- include('partials/footer') %>

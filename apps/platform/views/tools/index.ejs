@@ -1,0 +1,54 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<p class="eyebrow">Directory</p>
+<h1>Tools</h1>
+<form class="filters" id="directory-filters" action="/tools" method="get">
+<label class="label search-filter">Search<input class="input" name="search" value="<%= filters.search %>" type="search" maxlength="200">
+</label>
+<label class="label">Category<select class="input" name="category">
+<option value="">All categories</option>
+<% for (const category of categories) { %>
+<option value="<%= category.slug %>" <%= filters.category === category.slug ? 'selected' : '' %>>
+<%= category.name %>
+</option>
+<% } %>
+</select>
+</label>
+<label class="label">Tag<select class="input" name="tag">
+<option value="">All tags</option>
+<% for (const tag of tags) { %>
+<option value="<%= tag.slug %>" <%= filters.tag === tag.slug ? 'selected' : '' %>>
+<%= tag.name %>
+</option>
+<% } %>
+</select>
+</label>
+<label class="label">Sort<select class="input" name="sort">
+<% for (const [value,label] of [['newest','Newest'],['name','Name'],['popular','Popularity']]) { %>
+<option value="<%= value %>" <%= filters.sort === value ? 'selected' : '' %>>
+<%= label %>
+</option>
+<% } %>
+</select>
+</label>
+<button class="btn btn-secondary">Apply</button>
+</form>
+<p class="metadata" id="directory-status" role="status" aria-live="polite">
+<%= result.total %> tools found</p>
+<div id="tool-results" class="grid">
+<% for (const tool of result.tools) { %>
+<%- include('partials/tool-card', {tool}) %>
+<% } %>
+</div>
+<div id="directory-empty" class="empty-state" <%= result.tools.length ? 'hidden' : '' %>>No tools match these filters.</div>
+<div class="pagination" id="directory-pagination">
+<% if (result.page > 1) { %>
+<a href="/tools?<%= new URLSearchParams({...filters,page:result.page-1}) %>">Previous</a>
+<% } %>
+<% if (result.page * result.limit < result.total) { %>
+<a href="/tools?<%= new URLSearchParams({...filters,page:result.page+1}) %>">Next</a>
+<% } %>
+</div>
+<script src="/assets/directory.js" defer>
+</script>
+<%- include('partials/footer') %>

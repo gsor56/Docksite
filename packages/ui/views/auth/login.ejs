@@ -1,0 +1,22 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<section class="narrow">
+<p class="eyebrow">
+<%= scope === 'cms' ? 'CMS access' : 'Account' %>
+</p>
+<h1>Login</h1>
+<form method="post" action="<%= basePath %>/login" class="card stack">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<label class="label">Email<input class="input" type="email" name="email" autocomplete="username" required maxlength="254">
+</label>
+<label class="label">Password<input class="input" type="password" name="password" autocomplete="current-password" required maxlength="200">
+</label>
+<button class="btn">Login</button>
+</form>
+<% if (scope !== 'cms') { %>
+<p>
+<a href="<%= basePath %>/register">Create an account</a>
+</p>
+<% } %>
+</section>
+<%- include('partials/footer') %>

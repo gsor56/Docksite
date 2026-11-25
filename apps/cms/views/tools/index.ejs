@@ -1,0 +1,53 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<div class="section-heading">
+<h1>Tools</h1>
+<a class="btn" href="<%= basePath %>/tools/new">Create tool</a>
+</div>
+<% if (!tools.length) { %>
+<div class="empty-state">No tools created yet. The URL Shortener module is implemented and can be registered here.</div>
+<% } else { %>
+<div class="table-wrap">
+<table class="table">
+<thead>
+<tr>
+<th>Name</th>
+<th>Slug</th>
+<th>Status</th>
+<th>Subdomain</th>
+<th>Updated</th>
+</tr>
+</thead>
+<tbody>
+<% for (const tool of tools) { %>
+<tr>
+<td>
+<a href="<%= basePath %>/tools/<%= tool.id %>">
+<%= tool.name %>
+</a>
+</td>
+<td>
+<code>
+<%= tool.slug %>
+</code>
+</td>
+<td>
+<span class="tag">
+<%= tool.status %>
+</span>
+</td>
+<td>
+<code>
+<%= tool.subdomain %>
+</code>
+</td>
+<td>
+<%= date(tool.updated_at) %>
+</td>
+</tr>
+<% } %>
+</tbody>
+</table>
+</div>
+<% } %>
+<%- include('partials/footer') %>

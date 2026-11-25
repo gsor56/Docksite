@@ -1,0 +1,35 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<h1>Submissions</h1>
+<% if (!submissions.length) { %>
+<div class="empty-state">No submissions received.</div>
+<% } %>
+<div class="stack">
+<% for (const submission of submissions) { %>
+<article class="card">
+<h2>
+<%= submission.title %>
+</h2>
+<p class="metadata">
+<%= submission.username %> · <%= submission.status %> · <%= date(submission.created_at) %>
+</p>
+<p class="prose">
+<%= submission.idea %>
+</p>
+<form class="stack" method="post" action="<%= basePath %>/submissions/<%= submission.id %>/review">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<label class="label">Decision<select class="input" name="status">
+<option value="approved">Approve</option>
+<option value="rejected" <%= submission.status === 'rejected' ? 'selected' : '' %>>Reject</option>
+</select>
+</label>
+<label class="label">Review note<textarea class="input" name="review_note" maxlength="2000">
+<%= submission.review_note || '' %>
+</textarea>
+</label>
+<button class="btn btn-secondary">Save review</button>
+</form>
+</article>
+<% } %>
+</div>
+<%- include('partials/footer') %>

@@ -1,0 +1,19 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<section class="narrow">
+<h1>Initialize owner account</h1>
+<p>The setup token is stored in your local environment file. This page closes after the first owner is created.</p>
+<form method="post" action="<%= basePath %>/setup" class="card stack">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<label class="label">Setup token<input class="input" type="password" name="setup_token" required autocomplete="off">
+</label>
+<label class="label">Username<input class="input" name="username" required minlength="3" maxlength="32" pattern="[a-zA-Z0-9_-]+" autocomplete="username">
+</label>
+<label class="label">Email<input class="input" type="email" name="email" required autocomplete="email">
+</label>
+<label class="label">Password<input class="input" type="password" name="password" required minlength="12" maxlength="72" autocomplete="new-password">
+</label>
+<button class="btn">Create owner</button>
+</form>
+</section>
+<%- include('partials/footer') %>

@@ -1,0 +1,12 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<section class="narrow">
+<h1>Password protected link</h1>
+<form class="card stack" method="post" action="<%= basePath %>/<%= code %>/unlock">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<label class="label">Link password<input class="input" type="password" name="password" required autocomplete="off" maxlength="200">
+</label>
+<button class="btn">Continue to destination</button>
+</form>
+</section>
+<%- include('partials/footer') %>

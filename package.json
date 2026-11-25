@@ -1,0 +1,47 @@
+{
+  "name": "docksite",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^20.19.0 || ^22.13.0 || >=24"
+  },
+  "workspaces": [
+    "apps/platform",
+    "apps/cms",
+    "apps/tools/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "install": "node scripts/check-runtime.js",
+    "dev": "node scripts/run-apps.js --watch",
+    "start": "npm start --workspace @docksite/platform",
+    "start:all": "node scripts/run-apps.js",
+    "migrate": "node packages/db/migrate.js",
+    "configure": "node scripts/configure.js",
+    "setup:owner": "node scripts/setup-owner.js",
+    "cleanup": "node scripts/cleanup.js",
+    "test": "node --test --test-concurrency=1 tests/*.test.js",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "bcrypt": "6.0.0",
+    "better-sqlite3": "12.11.1",
+    "dotenv": "18.0.10",
+    "ejs": "7.0.2",
+    "express": "5.3.0",
+    "express-rate-limit": "8.7.5",
+    "express-session": "1.19.0",
+    "morgan": "1.12.1",
+    "multer": "2.5.0",
+    "qrcode": "1.5.4",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.15.0",
+    "prettier": "3.10.1"
+  }
+}
