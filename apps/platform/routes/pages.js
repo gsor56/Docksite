@@ -11,6 +11,5 @@ router.get('/categories/:slug', pages.categoryShow);
 router.get('/build', pages.buildPage);
 router.post('/build', requireUser, formLimit(config.SUBMISSION_RATE_MAX), pages.submitIdea);
 router.get('/dashboard', requireUser, pages.dashboard);
-router.get('/privacy', pages.privacy);
-router.get('/terms', pages.terms);
+
 export default router;

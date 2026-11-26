@@ -1,30 +1,22 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
-<section class="narrow">
-<h1>Submit a tool idea</h1>
-<p>Describe the service you want to build. An administrator will review your submission.</p>
-<% if (!user) { %>
-<div class="alert">
-<a href="/login">Login</a> or <a href="/register">register</a> to submit an idea.</div>
-<% } else { %>
-<form class="card stack" method="post" action="/build">
-<input type="hidden" name="_csrf" value="<%= csrfToken %>">
-<label class="label">Title<input class="input" name="title" required minlength="3" maxlength="120">
-</label>
-<label class="label">Idea<textarea class="input" name="idea" required minlength="20" maxlength="5000">
-</textarea>
-</label>
-<label class="label">Category<select class="input" name="category_id">
-<option value="">Uncategorized</option>
-<% for (const category of categories) { %>
-<option value="<%= category.id %>">
-<%= category.name %>
-</option>
-<% } %>
-</select>
-</label>
-<button class="btn">Submit for review</button>
-</form>
-<% } %>
-</section>
+<div class="form-page">
+  <%- include('partials/page-header', { heading: 'Submit your project', subline: 'Share your working project or a tool idea. The owner reviews every submission.', catalogHeader: true }) %>
+  <section class="page-section" data-reveal>
+    <% if (!user) { %>
+      <div class="empty-state product-card"><%- include('partials/dock-mark') %><div class="empty-state-copy"><p><a href="/login">Login</a> or <a href="/register">register</a> to submit a project.</p><a class="btn" href="/login">Login <%- include('partials/arrow') %></a></div></div>
+    <% } else { %>
+      <form class="card stack product-card" method="post" action="/build">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <label class="label">Title<input class="input" name="title" required minlength="3" maxlength="120"></label>
+        <label class="label">Description<textarea class="input" name="idea" required minlength="20" maxlength="5000"></textarea></label>
+        <label class="label">Project URL<input class="input" type="url" name="project_url" maxlength="4096"><span class="muted">A real working project URL. Leave blank to submit an idea only.</span></label>
+        <label class="label">Repository URL (optional)<input class="input" type="url" name="repository_url" maxlength="4096"></label>
+        <label class="label">Category<select class="input" name="category_id"><option value="">Uncategorized</option><% for (const category of categories) { %><option value="<%= category.id %>"><%= category.name %></option><% } %></select></label>
+        <button class="btn">Submit for review <%- include('partials/arrow') %></button>
+      </form>
+    <% } %>
+    <ol class="how-it-works"><li><span class="step-number" aria-hidden="true">1</span><p>Share your project.</p></li><li><span class="step-number" aria-hidden="true">2</span><p>Submit for review.</p></li><li><span class="step-number" aria-hidden="true">3</span><p>Check your dashboard for the owner's decision.</p></li></ol>
+  </section>
+</div>
 <%- include('partials/footer') %>

@@ -45,6 +45,7 @@ export const registerSchema = z.object({
     .regex(/^[a-zA-Z0-9_-]+$/),
   email: z.email().trim().toLowerCase().max(254),
   password: passwordSchema,
+  account_type: z.enum(['user', 'contributor']).default('user'),
 });
 export const loginSchema = z.object({
   email: z.email().trim().toLowerCase().max(254),
@@ -65,6 +66,29 @@ export const directorySchema = z.object({
   page: z.coerce.number().int().min(1).max(100000).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(24),
 });
+
+export const webUrlSchema = z
+  .string()
+  .trim()
+  .max(4096)
+  .transform((value, context) => {
+    try {
+      const url = new URL(value);
+      if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password)
+        throw new Error();
+      return url.href;
+    } catch {
+      context.addIssue({
+        code: 'custom',
+        message: 'Enter an absolute HTTP or HTTPS URL without credentials.',
+      });
+      return z.NEVER;
+    }
+  });
+export const optionalWebUrl = z.preprocess(
+  (value) => (value === '' || value == null ? null : value),
+  webUrlSchema.nullable(),
+);
 export const toolSchema = z.object({
   slug: slugSchema,
   name: z.string().trim().min(2).max(100),
@@ -86,6 +110,8 @@ export const toolSchema = z.object({
     (value) => (value === '' || value == null ? null : value),
     z.literal('link-shortener').nullable(),
   ),
+  external_url: optionalWebUrl,
+  repository_url: optionalWebUrl,
   status: z.enum(['draft', 'pending', 'published', 'archived']),
   featured: checkbox,
   icon: z.enum(['link', 'box', 'code']).default('link'),
@@ -97,6 +123,8 @@ export const toolSchema = z.object({
 export const submissionSchema = z.object({
   title: z.string().trim().min(3).max(120),
   idea: z.string().trim().min(20).max(5000),
+  project_url: optionalWebUrl,
+  repository_url: optionalWebUrl,
   category_id: optionalId,
 });
 export const taxonomySchema = z.object({

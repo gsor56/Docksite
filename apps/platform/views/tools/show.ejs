@@ -1,46 +1,19 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
-<p class="eyebrow">Tool / <%= tool.slug %>
-</p>
-<h1>
-<%= tool.name %>
-</h1>
-<p>
-<%= tool.tagline %>
-</p>
-<div class="tags">
-<% if (tool.category) { %>
-<a class="tag" href="/categories/<%= tool.category.slug %>">
-<%= tool.category.name %>
-</a>
-<% } %>
-<% for (const tag of tool.tags) { %>
-<a class="tag" href="/tools?tag=<%= tag.slug %>">
-<%= tag.name %>
-</a>
-<% } %>
-</div>
-<div class="section prose">
-<%= tool.description %>
-</div>
-<p class="section">
-<a class="btn" href="<%= tool.url %>">Open <%= tool.name %>
-</a>
-</p>
-<p class="metadata">Created <time datetime="<%= tool.created_at %>">
-<%= date(tool.created_at) %>
-</time> · Updated <time datetime="<%= tool.updated_at %>">
-<%= date(tool.updated_at) %>
-</time>
-</p>
-<% if (related.length) { %>
-<section class="section">
-<h2>Related tools</h2>
-<div class="grid">
-<% for (const relatedTool of related) { %>
-<%- include('partials/tool-card', {tool:relatedTool}) %>
-<% } %>
-</div>
+<%- include('partials/page-header', { heading: tool.name, subline: tool.tagline, catalogHeader: true }) %>
+<section class="page-section tool-detail-layout" data-reveal>
+  <div class="tool-description">
+    <a class="tool-address" href="<%= tool.url %>"><%= new URL(tool.url).host %><%= new URL(tool.url).pathname === '/' ? '' : new URL(tool.url).pathname %></a>
+    <div class="prose"><%= tool.description %></div>
+    <div class="tags"><% if (tool.category) { %><a class="tag" href="/categories/<%= tool.category.slug %>"><%= tool.category.name %></a><% } %><% for (const tag of tool.tags) { %><a class="tag" href="/tools?tag=<%= tag.slug %>"><%= tag.name %></a><% } %></div>
+    <p class="tool-detail-action"><a class="btn" href="<%= tool.url %>">Open <%= tool.name %> <%- include('partials/arrow') %></a></p>
+  </div>
+  <aside class="card info-card product-card"><h2>At a glance</h2><dl class="info-list">
+    <div><dt>Category</dt><dd><% if (tool.category) { %><a href="/categories/<%= tool.category.slug %>"><%= tool.category.name %></a><% } else { %>Uncategorized<% } %></dd></div>
+    <div><dt>Status</dt><dd><span class="status-badge status-<%= tool.status %>"><%= tool.status %></span></dd></div>
+    <div><dt>Created</dt><dd><time datetime="<%= tool.created_at %>"><%= date(tool.created_at) %></time></dd></div>
+    <div><dt>Updated</dt><dd><time datetime="<%= tool.updated_at %>"><%= date(tool.updated_at) %></time></dd></div>
+  </dl></aside>
 </section>
-<% } %>
+<% if (related.length) { %><section class="section" data-reveal><div class="section-heading"><h2>Related tools</h2></div><div class="grid product-grid"><% for (const relatedTool of related) { %><%- include('partials/tool-card', { tool: relatedTool }) %><% } %></div></section><% } %>
 <%- include('partials/footer') %>

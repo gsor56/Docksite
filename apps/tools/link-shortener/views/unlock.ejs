@@ -1,12 +1,4 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
-<section class="narrow">
-<h1>Password protected link</h1>
-<form class="card stack" method="post" action="<%= basePath %>/<%= code %>/unlock">
-<input type="hidden" name="_csrf" value="<%= csrfToken %>">
-<label class="label">Link password<input class="input" type="password" name="password" required autocomplete="off" maxlength="200">
-</label>
-<button class="btn">Continue to destination</button>
-</form>
-</section>
+<div class="form-page"><%- include('partials/page-header', { eyebrow: 'URL Shortener', heading: 'Password protected link', ghost: 'unlock' }) %><section class="page-section" data-reveal><form class="card stack" method="post" action="<%= basePath %>/<%= code %>/unlock"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><label class="label">Link password<input class="input" type="password" name="password" required autocomplete="off" maxlength="200"></label><button class="btn">Continue to destination <%- include('partials/arrow') %></button></form></section></div>
 <%- include('partials/footer') %>

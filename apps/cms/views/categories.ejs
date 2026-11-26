@@ -1,6 +1,6 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
-<h1>Categories</h1>
+<%- include('partials/page-header', { eyebrow: '', heading: 'Categories', ghost: 'categories' }) %>
 <form class="card stack narrow" method="post" action="<%= basePath %>/categories">
 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 <label class="label">Name<input class="input" name="name" required maxlength="80">
@@ -14,7 +14,7 @@
 </form>
 <section class="section stack">
 <% if (!items.length) { %>
-<div class="empty-state">No categories created.</div>
+<%- include('partials/empty-state', { heading: 'No categories created.', message: '', actionHref: basePath + '/categories', actionLabel: 'Categories' }) %>
 <% } %>
 <% for (const item of items) { %>
 <article class="card">
@@ -37,4 +37,5 @@
 </article>
 <% } %>
 </section>
+<div class="page-end"></div>
 <%- include('partials/footer') %>

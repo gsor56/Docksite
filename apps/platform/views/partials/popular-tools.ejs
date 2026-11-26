@@ -1,0 +1,91 @@
+<% const initialTools = recent.slice().sort((a, b) => b.popularity - a.popularity || b.id - a.id).slice(0, 4); %>
+<section class="product-section popular-tools" aria-labelledby="popular-heading" data-reveal>
+  <div class="section-heading"><h2 id="popular-heading"><%= total > recent.length ? 'Explore tools' : 'Popular tools' %></h2><a class="tool-open" href="/tools?sort=popular">View directory <%- include('partials/arrow') %></a></div>
+  <nav class="product-filters" aria-label="Filter popular tools">
+    <a href="/tools?sort=popular" data-category="" aria-current="true">All</a>
+    <% for (const category of categories) { %>
+      <a href="/tools?<%= new URLSearchParams({ category: category.slug, sort: 'popular' }) %>" data-category="<%= category.slug %>"><%= category.name %></a>
+    <% } %>
+  </nav>
+  <p class="product-grid-status" id="popular-status" role="status"<%= initialTools.length ? ' hidden' : '' %>>No tools published yet.</p>
+  <div class="grid product-grid" id="popular-results">
+    <% for (const tool of initialTools) { %><%- include('partials/tool-card', { tool, preview: true }) %><% } %>
+    <% for (let slot = initialTools.length; slot < 4; slot++) { %><%- include('partials/project-slot') %><% } %>
+  </div>
+</section>
+<template id="popular-tool-card"><%- include('partials/tool-card', { tool: null, preview: true }) %></template>
+<template id="popular-project-slot"><%- include('partials/project-slot') %></template>
+<template id="popular-tool-icons">
+  <% for (const icon of ['box', 'link', 'code']) { %><span data-icon="<%= icon %>"><%- include('partials/icons', { icon }) %></span><% } %>
+</template>
+<script nonce="<%= nonce %>">
+  (() => {
+    const filters = document.querySelectorAll('.product-filters [data-category]');
+    const results = document.querySelector('#popular-results');
+    const heading = document.querySelector('#popular-heading');
+    const status = document.querySelector('#popular-status');
+    const toolCard = document.querySelector('#popular-tool-card').content.firstElementChild;
+    const projectSlot = document.querySelector('#popular-project-slot').content.firstElementChild;
+    const iconList = document.querySelector('#popular-tool-icons').content.children;
+    const icons = new Map(Array.from(iconList, (item) => [item.dataset.icon, item.firstElementChild]));
+    let pending;
+
+    function renderTool(tool) {
+      const card = toolCard.cloneNode(true);
+      const title = card.querySelector('h3 a');
+      const category = card.querySelector('.card-topline a');
+      const url = new URL(tool.url);
+      title.href = '/tools/' + encodeURIComponent(tool.slug);
+      title.textContent = tool.name;
+      card.querySelector('.tool-tagline').textContent = tool.tagline;
+      card.querySelector('.tool-card-bottom .metadata').textContent =
+        url.host + (url.pathname === '/' ? '' : url.pathname);
+      card.querySelector('.card-topline .icon').replaceWith((icons.get(tool.icon) || icons.get('box')).cloneNode(true));
+      if (tool.category) {
+        category.href = '/categories/' + encodeURIComponent(tool.category.slug);
+        category.textContent = tool.category.name;
+        category.hidden = false;
+      }
+      return card;
+    }
+
+    async function loadTools(link, followOnError = false) {
+      pending?.abort();
+      const request = new AbortController();
+      pending = request;
+      const params = new URLSearchParams({ sort: 'popular', limit: '4' });
+      if (link.dataset.category) params.set('category', link.dataset.category);
+      results.setAttribute('aria-busy', 'true');
+      try {
+        const response = await fetch('/api/tools?' + params, { signal: request.signal });
+        if (!response.ok) throw new Error('Could not load tools');
+        const { tools } = await response.json();
+        if (request !== pending) return;
+        const cards = tools.map(renderTool);
+        while (cards.length < 4) cards.push(projectSlot.cloneNode(true));
+        results.replaceChildren(...cards);
+        heading.textContent = 'Popular tools';
+        for (const filter of filters) {
+          if (filter === link) filter.setAttribute('aria-current', 'true');
+          else filter.removeAttribute('aria-current');
+        }
+        status.textContent = tools.length
+          ? tools.length + (tools.length === 1 ? ' tool shown.' : ' tools shown.')
+          : link.dataset.category ? 'No published tools in this category yet.' : 'No tools published yet.';
+        status.classList.toggle('sr-only', tools.length > 0);
+        status.hidden = false;
+      } catch (error) {
+        if (error.name !== 'AbortError' && request === pending && followOnError) location.assign(link.href);
+      } finally {
+        if (request === pending) results.removeAttribute('aria-busy');
+      }
+    }
+
+    for (const link of filters) link.addEventListener('click', (event) => {
+      if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      loadTools(link, true);
+    });
+    loadTools(filters[0]);
+  })();
+</script>

@@ -1,27 +1,14 @@
+<% const isPreview = typeof preview !== 'undefined' && preview; const address = tool ? new URL(tool.url) : null; %>
 <article class="card tool-card">
-  <div class="row">
-<%- include('icons', { icon: tool.icon }) %>
-<% if (tool.category) { %>
-<a class="tag" href="<%= platformUrl('/categories/' + tool.category.slug) %>">
-<%= tool.category.name %>
-</a>
-<% } %>
-</div>
-  <h3>
-<a href="<%= platformUrl('/tools/' + tool.slug) %>">
-<%= tool.name %>
-</a>
-</h3>
-  <p>
-<%= tool.tagline %>
-</p>
-  <div class="tags">
-<% for (const tag of tool.tags) { %>
-<span class="tag">
-<%= tag.name %>
-</span>
-<% } %>
-</div>
-  <a class="tool-open" href="<%= tool.url %>">Open tool <span aria-hidden="true">↗</span>
-</a>
+  <div class="card-topline">
+    <%- include('partials/icons', { icon: tool?.icon }) %>
+    <% if (tool?.category) { %><a class="tag" href="<%= platformUrl('/categories/' + tool.category.slug) %>"><%= tool.category.name %></a><% } else if (!tool) { %><a class="tag" hidden></a><% } %>
+  </div>
+  <h3><a href="<%= tool ? platformUrl('/tools/' + tool.slug) : '/tools' %>"><%= tool?.name %></a></h3>
+  <p class="tool-tagline"><%= tool?.tagline %></p>
+  <% if (!isPreview && tool.tags.length) { %><div class="tags"><% for (const tag of tool.tags) { %><span class="tag"><%= tag.name %></span><% } %></div><% } %>
+  <div class="tool-card-bottom">
+    <span class="metadata break"><%= address?.host %><%= address && address.pathname !== '/' ? address.pathname : '' %></span>
+    <% if (!isPreview) { %><a class="tool-open" href="<%= tool.url %>">Open tool <%- include('partials/arrow') %></a><% } %>
+  </div>
 </article>

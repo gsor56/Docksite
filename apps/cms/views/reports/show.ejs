@@ -1,0 +1,10 @@
+<%- include('partials/head') %><%- include('partials/header') %>
+<%- include('partials/page-header',{heading:'Review report',ghost:'report'}) %>
+<section class="page-section">
+<div class="card reading-width"><p class="metadata">Report <%= report.id %> · <%= date(report.created_at) %></p><h2><%= report.reason %></h2><p class="resource-url"><%= report.resource_url %></p><p class="prose"><%= report.description %></p><p>Reporter email: <%= report.reporter_email || 'Not supplied' %></p><p class="muted">This URL is displayed as text. No server visit or automatic enforcement occurs.</p></div>
+<form class="card stack form-page" method="post" action="<%= basePath %>/reports/<%= report.id %>/review">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<label class="label">Review state<select class="input" name="status"><% for (const [value,label] of [['open','Open'],['in-review','In review'],['resolved','Resolved'],['dismissed','Dismissed']]) { %><option value="<%= value %>" <%= report.status === value ? 'selected' : '' %>><%= label %></option><% } %></select></label>
+<label class="label">Private review note<textarea class="input" name="review_note" maxlength="2000"><%= report.review_note %></textarea></label><button class="btn">Save review</button>
+</form></section><%- include('partials/footer') %>
+

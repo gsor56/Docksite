@@ -1,10 +1,6 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
-<p class="eyebrow">Tool #<%= tool.id %>
-</p>
-<h1>
-<%= tool.name %>
-</h1>
+<%- include('partials/page-header', { eyebrow: 'Tool #' + tool.id, heading: tool.name, ghost: 'tool' }) %>
 <span class="tag">
 <%= tool.status %>
 </span>
@@ -33,4 +29,5 @@
 <button class="btn btn-secondary danger">Delete</button>
 </form>
 </div>
+<div class="page-end"></div>
 <%- include('partials/footer') %>

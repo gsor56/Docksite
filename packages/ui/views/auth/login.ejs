@@ -1,22 +1,24 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
-<section class="narrow">
-<p class="eyebrow">
-<%= scope === 'cms' ? 'CMS access' : 'Account' %>
-</p>
-<h1>Login</h1>
-<form method="post" action="<%= basePath %>/login" class="card stack">
-<input type="hidden" name="_csrf" value="<%= csrfToken %>">
-<label class="label">Email<input class="input" type="email" name="email" autocomplete="username" required maxlength="254">
-</label>
-<label class="label">Password<input class="input" type="password" name="password" autocomplete="current-password" required maxlength="200">
-</label>
-<button class="btn">Login</button>
-</form>
-<% if (scope !== 'cms') { %>
-<p>
-<a href="<%= basePath %>/register">Create an account</a>
-</p>
-<% } %>
+<%- include('partials/page-header', { eyebrow: scope === 'cms' ? 'CMS' : '', heading: scope === 'cms' && !ownerReady ? 'Set up CMS' : 'Login', ghost: 'login', catalogHeader: true }) %>
+<section class="auth-layout page-section" data-reveal>
+  <%- include('partials/auth-panel') %>
+  <div class="auth-form-column">
+    <% if (scope === 'cms' && !ownerReady) { %>
+    <section class="card stack">
+      <h2>Create your owner account</h2>
+      <p>The CMS is ready. Create the first owner account to access tools, categories, submissions, users, media, analytics, settings, and the activity log.</p>
+      <a class="btn" href="<%= basePath %>/setup">Set up owner account <%- include('partials/arrow') %></a>
+    </section>
+    <% } else { %>
+    <form method="post" action="<%= basePath %>/login" class="card stack product-card">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <label class="label">Email<input class="input" type="email" name="email" autocomplete="username" required maxlength="254"></label>
+      <label class="label">Password<input class="input" type="password" name="password" autocomplete="current-password" required maxlength="200"></label>
+      <button class="btn">Login <%- include('partials/arrow') %></button>
+    </form>
+    <% } %>
+    <% if (scope !== 'cms') { %><p class="auth-note"><a href="<%= basePath %>/register">Create an account</a></p><% } %>
+  </div>
 </section>
 <%- include('partials/footer') %>

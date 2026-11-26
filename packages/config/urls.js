@@ -10,8 +10,12 @@ export function origin(scope = 'platform', subdomain = '') {
 }
 
 export const platformUrl = (path = '/') => `${origin()}${path}`;
-export const cmsUrl = (path = '/') => `${origin('cms', 'cms')}${path}`;
+export const cmsUrl = (path = '/') =>
+  config.NODE_ENV === 'production' && config.URL_MODE === 'path'
+    ? platformUrl(`/cms${path === '/' ? '' : path}`)
+    : `${origin('cms', 'cms')}${path}`;
 export function toolUrl(tool) {
+  if (tool.external_url) return tool.external_url;
   if (config.URL_MODE === 'subdomain') return `${origin('link', tool.subdomain)}/`;
   return platformUrl(`/t/${encodeURIComponent(tool.subdomain)}`);
 }

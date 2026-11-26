@@ -8,7 +8,7 @@ test('migrations are repeatable, enforce constraints, and match the schema snaps
   const { db, migrate } = await import('@docksite/db');
   const { default: Database } = await import('better-sqlite3');
   try {
-    assert.equal(migrate().length, 3);
+    assert.equal(migrate().length, 5);
     assert.deepEqual(migrate(), []);
     assert.equal(db.prepare('SELECT COUNT(*) AS count FROM users').get().count, 0);
     assert.equal(db.prepare('SELECT COUNT(*) AS count FROM tools').get().count, 0);

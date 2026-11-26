@@ -1,54 +1,23 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
-<p class="eyebrow">Directory</p>
-<h1>Tools</h1>
-<form class="filters" id="directory-filters" action="/tools" method="get">
-<label class="label search-filter">Search<input class="input" name="search" value="<%= filters.search %>" type="search" maxlength="200">
-</label>
-<label class="label">Category<select class="input" name="category">
-<option value="">All categories</option>
-<% for (const category of categories) { %>
-<option value="<%= category.slug %>" <%= filters.category === category.slug ? 'selected' : '' %>>
-<%= category.name %>
-</option>
-<% } %>
-</select>
-</label>
-<label class="label">Tag<select class="input" name="tag">
-<option value="">All tags</option>
-<% for (const tag of tags) { %>
-<option value="<%= tag.slug %>" <%= filters.tag === tag.slug ? 'selected' : '' %>>
-<%= tag.name %>
-</option>
-<% } %>
-</select>
-</label>
-<label class="label">Sort<select class="input" name="sort">
-<% for (const [value,label] of [['newest','Newest'],['name','Name'],['popular','Popularity']]) { %>
-<option value="<%= value %>" <%= filters.sort === value ? 'selected' : '' %>>
-<%= label %>
-</option>
-<% } %>
-</select>
-</label>
-<button class="btn btn-secondary">Apply</button>
-</form>
-<p class="metadata" id="directory-status" role="status" aria-live="polite">
-<%= result.total %> tools found</p>
-<div id="tool-results" class="grid">
-<% for (const tool of result.tools) { %>
-<%- include('partials/tool-card', {tool}) %>
-<% } %>
-</div>
-<div id="directory-empty" class="empty-state" <%= result.tools.length ? 'hidden' : '' %>>No tools match these filters.</div>
-<div class="pagination" id="directory-pagination">
-<% if (result.page > 1) { %>
-<a href="/tools?<%= new URLSearchParams({...filters,page:result.page-1}) %>">Previous</a>
-<% } %>
-<% if (result.page * result.limit < result.total) { %>
-<a href="/tools?<%= new URLSearchParams({...filters,page:result.page+1}) %>">Next</a>
-<% } %>
-</div>
-<script src="/assets/directory.js" defer>
-</script>
+<%- include('partials/page-header', { heading: 'Tools', subline: 'A directory of standalone web tools and services.', catalogHeader: true }) %>
+<section class="page-section" data-reveal>
+  <form class="filters" id="directory-filters" action="/tools" method="get">
+    <div class="filter-controls">
+      <label class="label search-filter">Search<span class="search-field"><svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input class="input" id="tool-search" name="search" value="<%= filters.search %>" type="search" maxlength="200" placeholder="Search tools..."></span></label>
+      <label class="label">Tag<select class="input" name="tag"><option value="">All tags</option><% for (const tag of tags) { %><option value="<%= tag.slug %>" <%= filters.tag === tag.slug ? 'selected' : '' %>><%= tag.name %></option><% } %></select></label>
+      <label class="label">Sort<select class="input" name="sort"><% for (const [value,label] of [['newest','Newest'],['name','Name'],['popular','Popularity']]) { %><option value="<%= value %>" <%= filters.sort === value ? 'selected' : '' %>><%= label %></option><% } %></select></label>
+      <button class="btn btn-secondary">Apply <%- include('partials/arrow') %></button>
+    </div>
+    <fieldset class="category-filter"><legend>Category</legend><div class="chip-group">
+      <label class="chip-option"><input class="sr-only" type="radio" name="category" value="" <%= !filters.category ? 'checked' : '' %>><span class="filter-chip">All categories</span></label>
+      <% for (const category of categories) { %><label class="chip-option"><input class="sr-only" type="radio" name="category" value="<%= category.slug %>" <%= filters.category === category.slug ? 'checked' : '' %>><span class="filter-chip"><%= category.name %><span class="metadata"><%= category.tool_count %></span></span></label><% } %>
+    </div></fieldset>
+  </form>
+  <p class="metadata" id="directory-status" role="status" aria-live="polite"><%= result.total %> tools found</p>
+  <div id="tool-results" class="grid product-grid"><% for (const tool of result.tools) { %><%- include('partials/tool-card', { tool }) %><% } %></div>
+  <%- include('partials/empty-state', { id: 'directory-empty', hidden: result.tools.length > 0, heading: 'No tools match these filters.', message: '', actionHref: '/build', actionLabel: 'Submit a tool idea' }) %>
+  <div class="pagination" id="directory-pagination"><% if (result.page > 1) { %><a href="/tools?<%= new URLSearchParams({...filters,page:result.page-1}) %>">Previous</a><% } %><% if (result.page * result.limit < result.total) { %><a href="/tools?<%= new URLSearchParams({...filters,page:result.page+1}) %>">Next</a><% } %></div>
+</section>
+<script src="/assets/directory.js" defer></script>
 <%- include('partials/footer') %>

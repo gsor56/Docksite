@@ -9,9 +9,11 @@ import pages from './routes/pages.js';
 import tools from './routes/tools.js';
 import api from './routes/api.js';
 import seo from './routes/seo.js';
+import information from './routes/information.js';
 
 export function createPlatformApp({ localGateway = true } = {}) {
   const app = express();
+  app.set('json spaces', 2);
   if (localGateway) {
     const cms = createCmsApp();
     const shortener = createLinkApp();
@@ -20,6 +22,7 @@ export function createPlatformApp({ localGateway = true } = {}) {
     app.use('/t/:subdomain', (req, res, next) => {
       const tool = toolBySubdomain(req.params.subdomain);
       if (tool?.module_key === 'link-shortener') return shortener(req, res, next);
+      if (tool?.external_url) return res.redirect(302, tool.external_url);
       req.unknownSubdomain = true;
       next();
     });
@@ -32,7 +35,7 @@ export function createPlatformApp({ localGateway = true } = {}) {
           .render('errors/404', { title: 'Tool not found', error: 'This tool is unavailable.' })
       : next(),
   );
-  app.use(auth, pages, tools, api, seo);
+  app.use(auth, pages, tools, api, seo, information);
   finishApp(app);
   return app;
 }

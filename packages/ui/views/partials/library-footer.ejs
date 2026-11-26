@@ -1,0 +1,29 @@
+<footer class="footer site-footer library-footer">
+  <div class="container">
+    <div class="library-footer-top">
+      <div class="library-footer-brand">
+        <a class="brand" href="<%= platformUrl('/') %>" aria-label="<%= platformName %> homepage"><%- logo %></a>
+        <p>A directory of independent web tools.</p>
+      </div>
+      <div class="footer-grid">
+        <% for (const [group, links] of [
+          ['Product', [['/tools', 'Tools'], ['/categories', 'Categories'], ['/features', 'Features'], ['/changelog', 'Changelog']]],
+          ['Platform', [['/about', 'About'], ['/help', 'Help'], ['/contribute', 'Contribute'], ['/report-abuse', 'Report abuse']]],
+          ['Legal', [['/legal', 'Legal and safety'], ['/privacy', 'Privacy (draft)'], ['/terms', 'Terms (draft)'], ['/accessibility', 'Accessibility']]]
+        ]) { %>
+          <nav class="footer-column" aria-label="<%= group %>">
+            <strong><%= group %></strong>
+            <% for (const [path, label] of links) { %><a href="<%= platformUrl(path) %>"><%= label %></a><% } %>
+          </nav>
+        <% } %>
+        <nav class="footer-column" aria-label="Open source">
+          <strong>Open source</strong>
+          <% if (repositoryUrl) { %><a class="repository-link" href="<%= repositoryUrl %>" aria-label="Docksite source repository"><%- include('partials/github') %> GitHub</a><% } %>
+          <span>MIT licensed</span>
+        </nav>
+      </div>
+    </div>
+    <small class="library-copyright">© 2026 gsor56</small>
+    <p class="footer-wordmark" aria-hidden="true"><%= platformName %></p>
+  </div>
+</footer>

@@ -1,6 +1,6 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
-<h1>Users</h1>
+<%- include('partials/page-header', { eyebrow: '', heading: 'Users', ghost: 'users' }) %>
 <div class="table-wrap">
 <table class="table">
 <thead>
@@ -47,4 +47,5 @@
 </tbody>
 </table>
 </div>
+<div class="page-end"></div>
 <%- include('partials/footer') %>

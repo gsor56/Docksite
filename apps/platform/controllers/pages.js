@@ -1,10 +1,10 @@
-import { config } from '@docksite/config';
 import { platformUrl } from '@docksite/config/urls';
-import { db, now } from '@docksite/db';
+import { db } from '@docksite/db';
 import { listTools, linkTool } from '@docksite/db/repositories/tools';
 import { categories, findCategory } from '@docksite/db/repositories/taxonomy';
 import { parse, submissionSchema } from '@docksite/utils/validation';
 import { HttpError } from '@docksite/utils/http';
+import { submitProject } from '@docksite/db/repositories/submissions';
 
 export function home(req, res) {
   res.render('home', {
@@ -34,7 +34,7 @@ export function categoryShow(req, res) {
   });
 }
 export const buildPage = (req, res) =>
-  res.render('build', { title: 'Build with us', categories: categories() });
+  res.render('build', { title: 'Submit your project', categories: categories() });
 export function submitIdea(req, res) {
   const data = parse(submissionSchema, req.body);
   if (
@@ -42,9 +42,7 @@ export function submitIdea(req, res) {
     !db.prepare('SELECT id FROM categories WHERE id = ?').get(data.category_id)
   )
     throw new HttpError(422, 'Category not found.');
-  db.prepare(
-    'INSERT INTO tool_submissions (title,idea,category_id,submitted_by,created_at,updated_at) VALUES (?,?,?,?,?,?)',
-  ).run(data.title, data.idea, data.category_id, req.user.id, now(), now());
+  submitProject(data, req.user);
   req.session.flash = 'Your submission is awaiting review.';
   res.redirect('/dashboard');
 }
@@ -57,6 +55,3 @@ export function dashboard(req, res) {
     .get(req.user.id).total;
   res.render('dashboard', { title: 'Dashboard', submissions, links, shortener: linkTool() });
 }
-export const privacy = (req, res) =>
-  res.render('privacy', { title: 'Privacy', retention: config.ANALYTICS_RETENTION_DAYS });
-export const terms = (req, res) => res.render('terms', { title: 'Terms' });

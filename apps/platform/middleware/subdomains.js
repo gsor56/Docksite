@@ -28,6 +28,7 @@ export function subdomainRouting(cms, shortener) {
       req.gatewaySubdomain = subdomain;
       return shortener(req, res, next);
     }
+    if (tool?.external_url) return res.redirect(302, tool.external_url);
     req.unknownSubdomain = true;
     next();
   };

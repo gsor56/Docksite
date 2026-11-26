@@ -1,0 +1,13 @@
+<%- include('partials/head') %><%- include('partials/header') %>
+<div class="form-page"><%- include('partials/page-header',{heading:title,ghost:'release'}) %>
+<section class="page-section"><form class="card stack" method="post" action="<%= basePath %>/releases<%= release ? '/'+release.id : '' %>">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<% for (const [name,label,max] of [['title','Title',160],['slug','Unique slug',60],['version','Version (optional)',50]]) { %><label class="label"><%= label %><input class="input" name="<%= name %>" value="<%= release?.[name] || '' %>" maxlength="<%= max %>" <%= name !== 'version' ? 'required' : '' %>></label><% } %>
+<label class="label">Summary<textarea class="input" name="summary" required minlength="10" maxlength="500"><%= release?.summary || '' %></textarea></label>
+<label class="label">Body<textarea class="input" name="body" required minlength="20" maxlength="30000"><%= release?.body || '' %></textarea><span class="muted">Plain text. HTML and executable templates are never rendered.</span></label>
+<label class="label">Status<select class="input" name="status"><% for (const status of ['draft','published']) { %><option value="<%= status %>" <%= release?.status === status ? 'selected' : '' %>><%= status %></option><% } %></select></label>
+<button class="btn">Save release note</button>
+</form>
+<% if (release) { %><p><a href="<%= platformUrl('/changelog/'+release.slug) %>">Public page (published entries only)</a></p><form class="inline-form" action="<%= basePath %>/releases/<%= release.id %>/delete" method="post" data-confirm="Delete this release note?"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-secondary btn-small">Delete release note</button></form><% } %>
+</section></div><%- include('partials/footer') %>
+

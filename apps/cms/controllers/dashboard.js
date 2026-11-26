@@ -13,6 +13,14 @@ export function dashboard(req, res) {
       ? null
       : db.prepare("SELECT COUNT(*) AS count FROM tool_submissions WHERE status = 'pending'").get()
           .count,
+    releases: own ? null : db.prepare('SELECT COUNT(*) AS count FROM releases').get().count,
+    reports: own
+      ? null
+      : db
+          .prepare(
+            "SELECT COUNT(*) AS count FROM abuse_reports WHERE status IN ('open','in-review')",
+          )
+          .get().count,
     users: own ? null : db.prepare('SELECT COUNT(*) AS count FROM users').get().count,
   };
   res.render('dashboard', { title: 'CMS dashboard', counts });

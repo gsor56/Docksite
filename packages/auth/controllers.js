@@ -8,6 +8,7 @@ import { recordActivity } from '@docksite/db/repositories/activity';
 import { parse, registerSchema, loginSchema } from '@docksite/utils/validation';
 import { HttpError } from '@docksite/utils/http';
 import { regenerateSession, saveSession } from './index.js';
+import { isDirectLocalSetup } from './owner-setup.js';
 
 const dummyHash = await bcrypt.hash('invalid-credential-comparison', 12);
 async function signIn(req, user) {
@@ -17,11 +18,20 @@ async function signIn(req, user) {
 }
 export function authControllers(scope) {
   return {
-    loginPage: (req, res) => res.render('auth/login', { title: 'Login', scope }),
+    loginPage: (req, res) =>
+      res.render('auth/login', {
+        title: scope === 'cms' && !ownerExists() ? 'Set up CMS' : 'Login',
+        scope,
+      }),
     registerPage: (req, res) => res.render('auth/register', { title: 'Create account', scope }),
     setupPage: (req, res) => {
       if (ownerExists() || !config.SETUP_TOKEN) throw new HttpError(404, 'Page not found.');
-      res.render('auth/setup', { title: 'Owner setup' });
+      const localSetup = isDirectLocalSetup(req);
+      res.render('auth/setup', {
+        title: 'Owner setup',
+        localSetup,
+        setupToken: localSetup ? config.SETUP_TOKEN : '',
+      });
     },
     setup: async (req, res) => {
       if (ownerExists() || !config.SETUP_TOKEN) throw new HttpError(404, 'Page not found.');
@@ -52,7 +62,11 @@ export function authControllers(scope) {
       const data = parse(registerSchema, req.body);
       const passwordHash = await bcrypt.hash(data.password, 12);
       const user = db.transaction(() => {
-        const created = insertUser({ ...data, passwordHash });
+        const created = insertUser({
+          ...data,
+          passwordHash,
+          role: scope === 'cms' ? 'contributor' : data.account_type,
+        });
         recordEvent(null, created.id, 'signup');
         return created;
       })();

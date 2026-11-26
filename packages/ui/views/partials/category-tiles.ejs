@@ -1,0 +1,15 @@
+<% if (!categories.length) { %>
+  <div class="product-category-empty">
+    <%- include('partials/empty-state', { heading: 'No categories yet', message: 'Have a tool to share?', actionHref: '/build', actionLabel: 'Submit a project' }) %>
+  </div>
+<% } else { %>
+  <div class="category-tiles">
+    <% for (const category of categories) { %>
+      <a class="category-tile" href="<%= platformUrl('/categories/' + category.slug) %>">
+        <%- include('partials/icons', { icon: 'box' }) %>
+        <span><strong><%= category.name %></strong><span class="metadata"><%= category.tool_count %> <%= category.tool_count === 1 ? 'tool' : 'tools' %></span></span>
+        <%- include('partials/arrow') %>
+      </a>
+    <% } %>
+  </div>
+<% } %>

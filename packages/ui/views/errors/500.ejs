@@ -1,11 +1,8 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
-<section class="narrow">
-<p class="eyebrow">500</p>
-<h1>Server error</h1>
-<p>
-<%= error %>
-</p>
-<a class="btn btn-secondary" href="<%= platformUrl('/') %>">Return home</a>
+<section class="error-page">
+  <header class="page-header error-header" data-reveal><div class="page-background" aria-hidden="true"><span class="ghost-word">500</span></div><div class="page-header-content"><p class="eyebrow">Server error</p><h1>500</h1><p class="page-subline">Server error</p></div></header>
+  <p class="error-copy"><%= error %></p>
+  <a class="btn btn-secondary" href="<%= platformUrl('/') %>">Back to Docksite <%- include('partials/arrow') %></a>
 </section>
 <%- include('partials/footer') %>

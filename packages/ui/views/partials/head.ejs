@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <% if (noindex) { %><meta name="robots" content="noindex, follow"><% } %>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>
 <%= title %> · <%= platformName %>
@@ -20,8 +21,14 @@
   <meta name="twitter:title" content="<%= title %>">
   <meta name="twitter:description" content="<%= description %>">
   <% } %>
-  <link rel="icon" href="<%= basePath %>/assets/brand/docksite-icon.svg" type="image/svg+xml">
+  <link rel="icon" href="<%= basePath %>/assets/brand/<%= scope === 'cms' ? 'docksite-icon-white.svg' : 'docksite-icon.svg' %>" type="image/svg+xml">
   <link rel="stylesheet" href="<%= basePath %>/assets/global.css">
+  <% if (scope !== 'cms') { %>
+  <link rel="preload" href="<%= basePath %>/assets/fonts/instrument-serif-normal-400.woff2" as="font" type="font/woff2" crossorigin>
+  <% } %>
+  <link rel="preload" href="<%= basePath %>/assets/fonts/poppins-normal-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="<%= basePath %>/assets/design.css?v=20261126">
+  <script src="<%= basePath %>/assets/layout.js?v=20261125" defer></script>
   <script src="<%= basePath %>/assets/forms.js" defer>
 </script>
   <% if (structuredData) { %>
@@ -30,5 +37,5 @@
 </script>
 <% } %>
 </head>
-<body>
+<body class="site-docksite site-<%= scope %>">
 <a class="skip-link" href="#main">Skip to content</a>

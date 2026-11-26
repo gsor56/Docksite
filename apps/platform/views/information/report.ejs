@@ -1,0 +1,19 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<div class="form-page">
+<%- include('partials/page-header',{eyebrow:'Safety',heading:title,subline:description,ghost:'report'}) %>
+<section class="page-section" data-reveal>
+<% if (submitted) { %><%- include('partials/empty-state',{heading:'Your report is stored.',message:'Staff can review it in the private inbox. This does not automatically remove the resource or send an email.',actionHref:'/help',actionLabel:'Back to help'}) %><% } else { %>
+<form class="card stack" method="post" action="/report-abuse">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <label class="label">Reported URL or resource<input class="input" type="url" name="resource_url" required maxlength="4096"></label>
+  <label class="label">Reason<select class="input" name="reason" required><% for (const [value,label] of [['phishing','Phishing or scams'],['spam','Spam'],['malware','Malware'],['harassment','Harassment'],['copyright','Copyright or rights'],['illegal-content','Illegal or exploitative content'],['other','Other']]) { %><option value="<%= value %>"><%= label %></option><% } %></select></label>
+  <label class="label">Description<textarea class="input" name="description" required minlength="20" maxlength="5000"></textarea><span class="muted">Explain the concern. Do not include credentials or unnecessary sensitive information.</span></label>
+  <label class="label">Reporter email (optional)<input class="input" type="email" name="reporter_email" maxlength="254"></label>
+  <p class="muted">Reports and contact details are private to authorized staff. URLs are not visited automatically. See the <a href="/privacy">privacy draft</a>.</p>
+  <button class="btn">Submit report <%- include('partials/arrow') %></button>
+</form>
+<% } %>
+</section></div>
+<%- include('partials/footer') %>
+

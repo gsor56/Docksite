@@ -1,0 +1,8 @@
+<section class="empty-state"<% if (typeof id !== 'undefined' && id) { %> id="<%= id %>"<% } %><% if (typeof hidden !== 'undefined' && hidden) { %> hidden<% } %>>
+  <%- include('partials/dock-mark') %>
+  <div class="empty-state-copy">
+    <h3><%= heading %></h3>
+    <% if (message) { %><p><%= message %></p><% } %>
+    <a class="btn btn-secondary" href="<%= actionHref %>"><%= actionLabel %><%- include('partials/arrow') %></a>
+  </div>
+</section>

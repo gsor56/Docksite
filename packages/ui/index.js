@@ -6,13 +6,21 @@ import { randomBytes } from 'node:crypto';
 import { config } from '@docksite/config';
 import { origin, platformUrl, cmsUrl } from '@docksite/config/urls';
 import { requireSchema } from '@docksite/db';
-import { platformName } from '@docksite/db/repositories/settings';
+import { platformName, publicSettings } from '@docksite/db/repositories/settings';
 import { ownerExists } from '@docksite/db/repositories/users';
 import { authentication } from '@docksite/auth';
 import { csrf } from '@docksite/auth/csrf';
 
 const uiPath = fileURLToPath(new URL('./', import.meta.url));
 const logo = readFileSync(new URL('./assets/docksite-lockup.svg', import.meta.url), 'utf8')
+  .replace(/<\?xml[^>]*>/g, '')
+  .replace(/<metadata>[\s\S]*?<\/metadata>/g, '')
+  .replace(/xmlns:c2pa="[^"]*"/g, '')
+  .replace(/width="1164" height="256"/, 'width="146" height="32"');
+const whiteLogo = readFileSync(
+  new URL('./assets/docksite-lockup-white.svg', import.meta.url),
+  'utf8',
+)
   .replace(/<\?xml[^>]*>/g, '')
   .replace(/<metadata>[\s\S]*?<\/metadata>/g, '')
   .replace(/xmlns:c2pa="[^"]*"/g, '')
@@ -38,10 +46,16 @@ export function configureApp(app, scope, appDirectory) {
     res.locals.platformUrl = platformUrl;
     res.locals.cmsUrl = cmsUrl;
     res.locals.platformName = platformName();
+    res.locals.repositoryUrl = publicSettings().repository_url;
     res.locals.ownerReady = ownerExists();
-    res.locals.logo = logo;
+    res.locals.logo = scope === 'cms' ? whiteLogo : logo;
     res.locals.title = res.locals.platformName;
     res.locals.description = '';
+    res.locals.noindex =
+      scope !== 'platform' ||
+      ['/dashboard', '/login', '/register', '/setup', '/build'].includes(req.path);
+    if (res.locals.noindex)
+      res.set({ 'X-Robots-Tag': 'noindex, follow', 'Cache-Control': 'no-store' });
     res.locals.canonical = null;
     res.locals.structuredData = null;
     res.locals.nonce = randomBytes(16).toString('base64');
@@ -75,6 +89,8 @@ export function configureApp(app, scope, appDirectory) {
 
 export function finishApp(app) {
   app.use((req, res) => {
+    res.locals.noindex = true;
+    res.set('X-Robots-Tag', 'noindex, follow');
     if (req.path.startsWith('/api/')) return res.status(404).json({ error: 'Not found.' });
     return res.status(404).render('errors/404', {
       title: 'Page not found',
@@ -83,6 +99,8 @@ export function finishApp(app) {
   });
   app.use((error, req, res, next) => {
     if (res.headersSent) return next(error);
+    res.locals.noindex = true;
+    res.set('X-Robots-Tag', 'noindex, follow');
     let status = error.status || 500;
     let message = error.message;
     if (error.code?.startsWith('SQLITE_CONSTRAINT')) {

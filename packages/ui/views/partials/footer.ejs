@@ -1,15 +1,18 @@
 </main>
-<footer class="footer">
-<div class="container footer-inner">
-<span>
-<%= platformName %>
-</span>
-<nav aria-label="Footer">
-<a href="<%= platformUrl('/privacy') %>">Privacy</a>
-<a href="<%= platformUrl('/terms') %>">Terms</a>
-<a href="<%= platformUrl('/api/tools') %>">JSON API</a>
-</nav>
+<% if (scope === 'platform') { %>
+  <%- include('partials/library-footer') %>
+<% } else { %>
+<footer class="footer site-footer"><div class="container">
+<p class="footer-wordmark"><%= platformName %></p>
+<div class="footer-grid">
+<% for (const [group,links] of [
+  ['Product',[['/tools','Tools'],['/about','About'],['/features','Features'],['/changelog','Changelog'],['/status','Status · coming soon']]],
+  ['Resources',[['/help','Help'],['/contribute','Contribute'],['/contributors','Contributors · coming soon'],['/contact','Contact'],['/report-abuse','Report abuse']]],
+  ['Developers',[['/developers','Developers'],['/docs','Documentation'],['/api/docs','API reference'],['/integrations','Integrations · coming soon'],['/roadmap','Roadmap · coming soon']]],
+  ['Legal',[['/legal','Legal and safety'],['/privacy','Privacy · draft'],['/terms','Terms · draft'],['/cookies','Cookies · draft'],['/accessibility','Accessibility']]]
+]) { %><nav class="footer-column" aria-label="<%= group %>"><span class="eyebrow"><%= group %></span><% for (const [href,label] of links) { %><a href="<%= platformUrl(href) %>"><%= label %></a><% } %></nav><% } %>
 </div>
-</footer>
-</body>
-</html>
+<% if (repositoryUrl) { %><div class="footer-bottom"><a class="repository-link" href="<%= repositoryUrl %>" target="_blank" rel="noopener noreferrer" aria-label="Docksite repository on GitHub"><%- include('partials/github') %><span>GitHub</span><%- include('partials/arrow') %></a></div><% } %>
+</div></footer>
+<% } %>
+</body></html>

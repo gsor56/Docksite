@@ -11,6 +11,7 @@ import users from './routes/users.js';
 import media from './routes/media.js';
 import analytics from './routes/analytics.js';
 import settings from './routes/settings.js';
+import content from './routes/content.js';
 
 export function createCmsApp() {
   const app = express();
@@ -19,7 +20,7 @@ export function createCmsApp() {
   app.use(cmsAccess);
   const submissionLimit = formLimit(120);
   app.use((req, res, next) => (req.method === 'POST' ? submissionLimit(req, res, next) : next()));
-  app.use(dashboard, tools, taxonomy, submissions, users, media, analytics, settings);
+  app.use(dashboard, tools, taxonomy, submissions, users, media, analytics, settings, content);
   finishApp(app);
   return app;
 }

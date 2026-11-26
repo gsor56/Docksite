@@ -28,12 +28,19 @@ export function migrate() {
     if (existing && existing.checksum !== checksum)
       throw new Error(`Changed migration: ${version}`);
     if (existing) continue;
-    db.transaction(() => {
-      db.exec(sql);
-      db.prepare(
-        'INSERT INTO schema_migrations (version, checksum, applied_at) VALUES (?, ?, ?)',
-      ).run(version, checksum, now());
-    })();
+    db.pragma('foreign_keys = OFF');
+    try {
+      db.transaction(() => {
+        db.exec(sql);
+        if (db.pragma('foreign_key_check').length)
+          throw new Error('Migration violates foreign keys.');
+        db.prepare(
+          'INSERT INTO schema_migrations (version, checksum, applied_at) VALUES (?, ?, ?)',
+        ).run(version, checksum, now());
+      })();
+    } finally {
+      db.pragma('foreign_keys = ON');
+    }
     applied.push(version);
   }
   db.prepare(
@@ -44,7 +51,8 @@ export function migrate() {
 
 export function requireSchema() {
   if (
-    !db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'short_links'").get()
+    !db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'releases'").get() ||
+    !db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'email_outbox'").get()
   ) {
     throw new Error('Database is not migrated. Run npm run migrate.');
   }

@@ -1,6 +1,7 @@
 import { db, now } from '../index.js';
 import { toolUrl } from '@docksite/config/urls';
 import { recordActivity } from './activity.js';
+import { assertExternalProject } from '@docksite/utils/project-urls';
 
 function serialize(row) {
   if (!row) return null;
@@ -101,10 +102,25 @@ export function saveTool(data, actor, id = null) {
         new Error('Contributors can manage their own drafts and pending tools.'),
         { status: 403 },
       );
-    if (data.status === 'published' && data.module_key !== 'link-shortener')
-      throw Object.assign(new Error('Publishing requires an implemented tool module.'), {
+
+    assertExternalProject(data.external_url);
+    if (data.module_key && data.external_url)
+      throw Object.assign(new Error('Choose a local module or an external project URL.'), {
         status: 422,
       });
+    if (actor.role === 'contributor' && data.module_key)
+      throw Object.assign(new Error('Only staff can assign executable modules.'), { status: 403 });
+    if (
+      actor.role !== 'owner' &&
+      (data.external_url || existing?.external_url) &&
+      (data.status === 'published' || existing?.status === 'published')
+    )
+      throw Object.assign(new Error('External projects require owner approval.'), { status: 403 });
+    if (data.status === 'published' && !data.module_key && !data.external_url)
+      throw Object.assign(
+        new Error('Publishing requires an implemented module or a working project URL.'),
+        { status: 422 },
+      );
     if (
       data.category_id &&
       !db.prepare('SELECT id FROM categories WHERE id = ?').get(data.category_id)
@@ -129,16 +145,18 @@ export function saveTool(data, actor, id = null) {
       data.status,
       data.featured ? 1 : 0,
       data.icon,
+      data.external_url || null,
+      data.repository_url || null,
     ];
     if (id)
       db.prepare(
-        'UPDATE tools SET slug=?, name=?, tagline=?, description=?, category_id=?, subdomain=?, module_key=?, status=?, featured=?, icon=?, published_at=?, updated_at=? WHERE id=?',
+        'UPDATE tools SET slug=?, name=?, tagline=?, description=?, category_id=?, subdomain=?, module_key=?, status=?, featured=?, icon=?, external_url=?, repository_url=?, published_at=?, updated_at=? WHERE id=?',
       ).run(...fields, publishedAt, timestamp, id);
     else
       id = Number(
         db
           .prepare(
-            'INSERT INTO tools (slug,name,tagline,description,category_id,subdomain,module_key,status,featured,icon,owner_id,published_at,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            'INSERT INTO tools (slug,name,tagline,description,category_id,subdomain,module_key,status,featured,icon,external_url,repository_url,owner_id,published_at,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
           )
           .run(...fields, actor.id, publishedAt, timestamp, timestamp).lastInsertRowid,
       );

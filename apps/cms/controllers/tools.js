@@ -4,6 +4,7 @@ import { categories, tags } from '@docksite/db/repositories/taxonomy';
 import { recordActivity } from '@docksite/db/repositories/activity';
 import { parse, idSchema, toolSchema } from '@docksite/utils/validation';
 import { HttpError } from '@docksite/utils/http';
+import { syncToolSubmission } from '@docksite/db/repositories/submissions';
 
 function accessibleTool(req) {
   const tool = toolById(parse(idSchema, req.params.id));
@@ -31,12 +32,20 @@ export const editPage = (req, res) =>
 export const detail = (req, res) =>
   res.render('tools/show', { title: 'Tool detail', tool: accessibleTool(req) });
 export function create(req, res) {
-  const id = saveTool(parse(toolSchema, req.body), req.user);
+  const id = db.transaction(() => {
+    const created = saveTool(parse(toolSchema, req.body), req.user);
+    syncToolSubmission(created, req.user);
+    return created;
+  })();
   req.session.flash = 'Tool created.';
   res.redirect(`${res.locals.basePath}/tools/${id}`);
 }
 export function update(req, res) {
-  const id = saveTool(parse(toolSchema, req.body), req.user, parse(idSchema, req.params.id));
+  const id = db.transaction(() => {
+    const updated = saveTool(parse(toolSchema, req.body), req.user, parse(idSchema, req.params.id));
+    syncToolSubmission(updated, req.user);
+    return updated;
+  })();
   req.session.flash = 'Tool updated.';
   res.redirect(`${res.locals.basePath}/tools/${id}`);
 }
@@ -55,6 +64,17 @@ export function remove(req, res) {
   if (req.user.role === 'contributor' && !['draft', 'pending'].includes(tool.status))
     throw new HttpError(403, 'Only drafts and pending tools can be deleted by contributors.');
   db.transaction(() => {
+    const submissions = db
+      .prepare("SELECT id FROM tool_submissions WHERE tool_id=? AND status='pending'")
+      .all(tool.id);
+    for (const submission of submissions) {
+      db.prepare(
+        "UPDATE tool_submissions SET status='rejected',review_note='Project withdrawn.',updated_at=? WHERE id=?",
+      ).run(now(), submission.id);
+      db.prepare(
+        "DELETE FROM email_outbox WHERE submission_id=? AND status IN ('pending','failed')",
+      ).run(submission.id);
+    }
     db.prepare('DELETE FROM tools WHERE id = ?').run(tool.id);
     recordActivity(req.user.id, 'tool.delete', 'tool', tool.id);
   })();

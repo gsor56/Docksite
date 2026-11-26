@@ -1,13 +1,12 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
-<p class="eyebrow">Link #<%= link.id %>
-</p>
-<h1>Short link</h1>
-<div class="card stack">
+<%- include('partials/page-header', { eyebrow: 'Link #' + link.id, heading: 'Short link', ghost: 'link' }) %>
+<section class="page-section"><div class="link-detail-layout">
+<div class="card stack record-card">
 <p class="link-code" id="short-url">
 <%= shortUrl %>
 </p>
-<div class="row">
+<div class="record-actions">
 <button class="btn" id="copy-link" data-url="<%= shortUrl %>" data-endpoint="<%= basePath %>/api/links/<%= link.id %>/share" data-token="<%= csrfToken %>">Copy URL</button>
 <a class="btn btn-secondary" href="<%= basePath %>/links/<%= link.id %>/edit">Edit</a>
 <a class="btn btn-secondary" href="<%= basePath %>/links/<%= link.id %>/qr.png" download="<%= link.code %>.png">Download QR</a>
@@ -22,7 +21,7 @@
 <br>Password: <%= link.password_hash ? 'Protected' : 'None' %> · Enabled: <%= link.is_active ? 'Yes' : 'No' %>
 <br>Created: <%= date(link.created_at) %> · Updated: <%= date(link.updated_at) %>
 </p>
-<div class="row">
+<div class="record-actions">
 <form method="post" action="<%= basePath %>/links/<%= link.id %>/disable">
 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 <button class="btn btn-secondary">Disable</button>
@@ -33,10 +32,11 @@
 </form>
 </div>
 </div>
-<section class="section">
-<h2>Click analytics</h2>
+</div></section>
+<section class="section" data-reveal>
+<div class="section-heading"><h2>Click analytics</h2></div>
 <% if (!clicks.length) { %>
-<div class="empty-state">No clicks recorded.</div>
+<%- include('partials/empty-state', { heading: 'No clicks recorded.', message: '', actionHref: basePath + '/dashboard', actionLabel: 'My links' }) %>
 <% } else { %>
 <p class="metadata">Latest 100 clicks</p>
 <div class="table-wrap">

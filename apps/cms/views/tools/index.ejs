@@ -1,11 +1,9 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
-<div class="section-heading">
-<h1>Tools</h1>
-<a class="btn" href="<%= basePath %>/tools/new">Create tool</a>
-</div>
+<%- include('partials/page-header', { eyebrow: '', heading: 'Tools', ghost: 'tools' }) %>
+<p><a class="btn" href="<%= basePath %>/tools/new">Create tool</a></p>
 <% if (!tools.length) { %>
-<div class="empty-state">No tools created yet. The URL Shortener module is implemented and can be registered here.</div>
+<%- include('partials/empty-state', { heading: 'No tools created yet. The URL Shortener module is implemented and can be registered here.', message: '', actionHref: basePath + '/tools/new', actionLabel: 'Create tool' }) %>
 <% } else { %>
 <div class="table-wrap">
 <table class="table">
@@ -32,7 +30,7 @@
 </code>
 </td>
 <td>
-<span class="tag">
+<span class="status-badge status-<%= tool.status %>">
 <%= tool.status %>
 </span>
 </td>
@@ -50,4 +48,5 @@
 </table>
 </div>
 <% } %>
+<div class="page-end"></div>
 <%- include('partials/footer') %>

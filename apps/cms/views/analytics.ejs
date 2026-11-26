@@ -1,6 +1,6 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
-<h1>Analytics</h1>
+<%- include('partials/page-header', { eyebrow: '', heading: 'Analytics', ghost: 'analytics' }) %>
 <div class="row">
 <% for (const total of totals) { %>
 <span class="tag">
@@ -10,7 +10,7 @@
 </div>
 <p class="muted">Latest 200 events. Popularity counts real use events, including link creation and redirects.</p>
 <% if (!events.length) { %>
-<div class="empty-state">No analytics events recorded.</div>
+<%- include('partials/empty-state', { heading: 'No analytics events recorded.', message: '', actionHref: basePath + '/dashboard', actionLabel: 'Dashboard' }) %>
 <% } else { %>
 <div class="table-wrap">
 <table class="table">
@@ -45,4 +45,5 @@
 </table>
 </div>
 <% } %>
+<div class="page-end"></div>
 <%- include('partials/footer') %>

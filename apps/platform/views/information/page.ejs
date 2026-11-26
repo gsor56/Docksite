@@ -1,0 +1,24 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<%- include('partials/page-header', {eyebrow:page.state === 'draft' ? 'Draft policy' : '',heading:page.title,subline:page.description,ghost:page.title.toLowerCase().split(' ')[0]}) %>
+<section class="page-section information-layout" data-reveal>
+  <% if (page.state === 'draft') { %><%- include('information/draft-notice') %><% } %>
+  <% if (page.state === 'coming-soon') { %>
+    <%- include('information/coming-soon') %>
+  <% } else { %>
+    <% if (page.version || page.published_at) { %><p class="metadata"><% if (page.version) { %><span class="tag"><%= page.version %></span><% } %> <% if (page.published_at) { %>Published <%= date(page.published_at) %><% } %></p><% } %>
+    <div class="reading-width">
+    <% for (const section of page.sections) { %>
+      <section class="prose-section">
+        <% if (section.heading) { %><h2><%= section.heading %></h2><% } %>
+        <% for (const paragraph of section.paragraphs || []) { %><p class="information-prose"><%= paragraph %></p><% } %>
+        <% if (section.items?.length) { %><ul><% for (const item of section.items) { %><li><%= item %></li><% } %></ul><% } %>
+        <% if (section.code) { %><pre class="code-block"><code><%= section.code %></code></pre><% } %>
+        <% if (section.links?.length) { %><div class="information-links"><% for (const link of section.links) { %><a href="<%= link.href %>" <%= link.href.startsWith('https://') ? 'rel=noopener' : '' %>><%= link.label %> <%- include('partials/arrow') %></a><% } %></div><% } %>
+      </section>
+    <% } %>
+    </div>
+  <% } %>
+</section>
+<%- include('partials/footer') %>
+

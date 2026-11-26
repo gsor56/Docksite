@@ -1,0 +1,9 @@
+<%- include('partials/head') %><%- include('partials/header') %>
+<%- include('partials/page-header',{heading:'Release notes',ghost:'releases'}) %>
+<section class="page-section">
+<p><a class="btn btn-small" href="<%= basePath %>/releases/new">New release note <%- include('partials/arrow') %></a></p>
+<% if (!releases.length) { %><%- include('partials/empty-state',{heading:'No release notes yet.',message:'Draft an actual product release. Local builds are not public releases.',actionHref:basePath+'/releases/new',actionLabel:'Create release note'}) %><% } else { %>
+<div class="table-wrap"><table class="table"><thead><tr><th>Title</th><th>Version</th><th>Status</th><th>Published</th><th>Action</th></tr></thead><tbody><% for (const release of releases) { %><tr><td><%= release.title %></td><td><%= release.version || '—' %></td><td><span class="status-badge status-<%= release.status %>"><%= release.status %></span></td><td><%= date(release.published_at) %></td><td><a href="<%= basePath %>/releases/<%= release.id %>/edit">Edit</a></td></tr><% } %></tbody></table></div>
+<% } %></section>
+<%- include('partials/footer') %>
+

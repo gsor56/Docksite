@@ -1,9 +1,6 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
-<section class="narrow">
-<h1>
-<%= link ? 'Edit short link' : 'Create short link' %>
-</h1>
+<div class="form-page"><%- include('partials/page-header', { eyebrow: 'URL Shortener', heading: link ? 'Edit short link' : 'Create short link', ghost: 'link' }) %><section class="page-section" data-reveal>
 <form class="card stack" action="<%= basePath %>/links<%= link ? '/' + link.id : '' %>" method="post">
 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 <label class="label">Destination URL<input class="input" name="destination_url" type="url" required maxlength="4096" value="<%= link?.destination_url || '' %>">
@@ -32,7 +29,7 @@
 <input type="checkbox" name="is_active" <%= !link || link.is_active ? 'checked' : '' %>>Enabled</label>
 <button class="btn">Save link</button>
 </form>
-</section>
+</section></div>
 <script src="<%= basePath %>/assets/links.js" defer>
 </script>
 <%- include('partials/footer') %>

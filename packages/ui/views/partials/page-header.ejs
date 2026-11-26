@@ -1,0 +1,11 @@
+<% const useSubdomains = scope === 'platform' && typeof catalogHeader !== 'undefined' && catalogHeader; %>
+<header class="page-header<%= useSubdomains ? ' page-header-stack' : '' %>" data-reveal>
+  <div class="page-background" aria-hidden="true">
+    <% if (useSubdomains) { %><%- include('partials/subdomain-stack', { compact: true }) %><% } else { %><span class="ghost-word"><%= ghost %></span><% } %>
+  </div>
+  <div class="page-header-content">
+    <% if (typeof eyebrow !== 'undefined' && eyebrow) { %><p class="eyebrow"><%= eyebrow %></p><% } %>
+    <h1><%= heading %></h1>
+    <% if (typeof subline !== 'undefined' && subline) { %><p class="page-subline"><%= subline %></p><% } %>
+  </div>
+</header>

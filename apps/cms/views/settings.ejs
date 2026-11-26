@@ -1,13 +1,15 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
-<section class="narrow">
-<h1>Settings</h1>
+<section class="form-page page-section">
+<%- include('partials/page-header', { eyebrow: '', heading: 'Settings', ghost: 'settings' }) %>
 <form class="card stack" method="post" action="<%= basePath %>/settings">
 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 <label class="label">Platform name<input class="input" name="platform_name" value="<%= name %>" required maxlength="80">
 </label>
+<% for (const [name,label] of [['contact_email','Public contact email'],['privacy_email','Privacy request email'],['security_email','Private security email'],['repository_url','Repository URL']]) { %><label class="label"><%= label %><input class="input" type="<%= name === 'repository_url' ? 'url' : 'email' %>" name="<%= name %>" value="<%= publicConfig[name] %>"><span class="muted">Leave blank to show setup pending. Only configure a channel you actually maintain.</span></label><% } %>
 <button class="btn">Save settings</button>
 </form>
 <p class="muted">Domains, ports, security secrets, and storage paths are configured through environment variables.</p>
 </section>
+<div class="page-end"></div>
 <%- include('partials/footer') %>

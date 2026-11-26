@@ -1,0 +1,7 @@
+<div class="<%= compact ? 'header-subdomain-stack' : 'subdomain-stack' %>" aria-hidden="true">
+  <% for (const [index, prefix] of ['notes', 'pdf', 'convert', 'invoice', 'qr', 'timer'].entries()) { %>
+    <div class="subdomain-row<%= index === 2 ? ' is-active' : '' %>">
+      <div class="subdomain-parallax"><div class="subdomain-arrival"><span class="subdomain-prefix" data-text="<%= prefix %>"><%= prefix %></span><span class="subdomain-suffix" data-text=".<%= platformName.toLowerCase() %>">.<%= platformName.toLowerCase() %></span></div></div>
+    </div>
+  <% } %>
+</div>

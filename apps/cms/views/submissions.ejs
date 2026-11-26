@@ -1,8 +1,10 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
-<h1>Submissions</h1>
+<%- include('partials/page-header', { eyebrow: '', heading: 'Submissions', ghost: 'submissions' }) %>
+<div class="alert"><%= emailConfigured ? 'Review notifications use the configured SMTP sender.' : 'SMTP setup is pending. Review notifications are saved in the queue; no emails have been sent by an unconfigured sender.' %></div>
+<% if (user.role === 'owner') { %><form class="inline-form" action="<%= basePath %>/submissions/send-notifications" method="post"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="btn btn-secondary btn-small">Process notification queue</button></form><% } %>
 <% if (!submissions.length) { %>
-<div class="empty-state">No submissions received.</div>
+<%- include('partials/empty-state', { heading: 'No submissions received.', message: '', actionHref: basePath + '/submissions', actionLabel: 'Submissions' }) %>
 <% } %>
 <div class="stack">
 <% for (const submission of submissions) { %>
@@ -13,10 +15,13 @@
 <p class="metadata">
 <%= submission.username %> · <%= submission.status %> · <%= date(submission.created_at) %>
 </p>
+<% if (submission.project_url) { %><p><a href="<%= submission.project_url %>" target="_blank" rel="noopener noreferrer">Open submitted project</a></p><% } %>
+<% if (submission.repository_url) { %><p><a href="<%= submission.repository_url %>" target="_blank" rel="noopener noreferrer">Repository</a></p><% } %>
+<p class="metadata">Notification: <%= submission.email_status || 'No notification record' %></p>
 <p class="prose">
 <%= submission.idea %>
 </p>
-<form class="stack" method="post" action="<%= basePath %>/submissions/<%= submission.id %>/review">
+<% if (user.role === 'owner') { %><form class="stack" method="post" action="<%= basePath %>/submissions/<%= submission.id %>/review">
 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 <label class="label">Decision<select class="input" name="status">
 <option value="approved">Approve</option>
@@ -28,8 +33,9 @@
 </textarea>
 </label>
 <button class="btn btn-secondary">Save review</button>
-</form>
+</form><% } %>
 </article>
 <% } %>
 </div>
+<div class="page-end"></div>
 <%- include('partials/footer') %>

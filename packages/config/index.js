@@ -29,6 +29,20 @@ const schema = z.object({
   INITIAL_PLATFORM_NAME: z.string().trim().min(1).max(80).default('Docksite'),
   OWNER_USERNAME: z.string().default(''),
   OWNER_EMAIL: z.string().default(''),
+  REVIEW_EMAIL: z.union([z.literal(''), z.email()]).default(''),
+  CONTACT_EMAIL: z.union([z.literal(''), z.email()]).default(''),
+  REPOSITORY_URL: z
+    .union([z.literal(''), z.url().refine((value) => value.startsWith('https://'))])
+    .default(''),
+  SMTP_HOST: z.string().default(''),
+  SMTP_PORT: integer(465, 65535),
+  SMTP_SECURE: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((value) => value === 'true'),
+  SMTP_USER: z.string().default(''),
+  SMTP_PASSWORD: z.string().default(''),
+  SMTP_FROM: z.union([z.literal(''), z.email()]).default(''),
   OWNER_PASSWORD: z.string().default(''),
   SETUP_TOKEN: z.string().default(''),
   ANALYTICS_HASH_SECRET: z.string().min(32),

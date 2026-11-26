@@ -15,6 +15,13 @@ export async function prepareEnvironment() {
   }
   Object.assign(process.env, {
     NODE_ENV: 'test',
+    REVIEW_EMAIL: 'review@localhost.test',
+    CONTACT_EMAIL: '',
+    REPOSITORY_URL: '',
+    SMTP_HOST: '',
+    SMTP_USER: '',
+    SMTP_PASSWORD: '',
+    SMTP_FROM: 'sender@localhost.test',
     BASE_DOMAIN: 'localhost',
     URL_SCHEME: 'http',
     URL_MODE: 'path',

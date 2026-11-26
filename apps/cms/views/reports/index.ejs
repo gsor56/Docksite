@@ -1,0 +1,8 @@
+<%- include('partials/head') %><%- include('partials/header') %>
+<%- include('partials/page-header',{heading:'Abuse reports',ghost:'reports'}) %>
+<section class="page-section">
+<p class="muted">Private staff inbox. The latest 200 reports are shown. Reports do not automatically remove content.</p>
+<% if (!reports.length) { %><%- include('partials/empty-state',{heading:'No reports yet.',message:'Reports submitted through the public form will be stored here.',actionHref:basePath+'/dashboard',actionLabel:'Dashboard'}) %><% } else { %>
+<div class="table-wrap"><table class="table"><thead><tr><th>ID</th><th>Resource</th><th>Reason</th><th>Status</th><th>Created</th><th>Action</th></tr></thead><tbody><% for (const report of reports) { %><tr><td><%= report.id %></td><td class="resource-url"><%= report.resource_url %></td><td><%= report.reason %></td><td><span class="status-badge"><%= report.status %></span></td><td><%= date(report.created_at) %></td><td><a href="<%= basePath %>/reports/<%= report.id %>">Review</a></td></tr><% } %></tbody></table></div><% } %>
+</section><%- include('partials/footer') %>
+

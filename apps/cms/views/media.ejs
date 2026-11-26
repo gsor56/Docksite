@@ -1,6 +1,6 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
-<h1>Media</h1>
+<%- include('partials/page-header', { eyebrow: '', heading: 'Media', ghost: 'media' }) %>
 <p class="metadata">PNG, JPEG, GIF, WebP · Maximum <%= Math.floor(maxBytes / 1048576) %> MB</p>
 <form class="card stack narrow" method="post" action="<%= basePath %>/media" enctype="multipart/form-data">
 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -21,7 +21,7 @@
 </form>
 <section class="section">
 <% if (!media.length) { %>
-<div class="empty-state">No media uploaded.</div>
+<%- include('partials/empty-state', { heading: 'No media uploaded.', message: '', actionHref: basePath + '/media', actionLabel: 'Media' }) %>
 <% } else { %>
 <div class="grid">
 <% for (const item of media) { %>
@@ -47,4 +47,5 @@
 </section>
 <script src="<%= basePath %>/assets/media.js" defer>
 </script>
+<div class="page-end"></div>
 <%- include('partials/footer') %>

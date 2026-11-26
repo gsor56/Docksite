@@ -1,9 +1,7 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
-<section class="narrow">
-<h1>
-<%= tool ? 'Edit tool' : 'Create tool' %>
-</h1>
+<div class="form-page"><%- include('partials/page-header', { eyebrow: '', heading: tool ? 'Edit tool' : 'Create tool', ghost: 'tool' }) %>
+<section class="page-section">
 <form class="card stack" method="post" action="<%= basePath %>/tools<%= tool ? '/' + tool.id : '' %>">
 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 <% for (const [name,label,max] of [['name','Name',100],['slug','Slug',60],['tagline','Tagline',180],['subdomain','Subdomain',50]]) { %>
@@ -25,9 +23,11 @@
 <% } %>
 </select>
 </label>
+<label class="label">Project URL<input class="input" type="url" name="external_url" value="<%= tool?.external_url || '' %>" maxlength="4096"><span class="muted">An independently hosted working project. Submit as pending for owner review.</span></label>
+<label class="label">Repository URL<input class="input" type="url" name="repository_url" value="<%= tool?.repository_url || '' %>" maxlength="4096"></label>
 <label class="label">Implementation<select class="input" name="module_key">
 <option value="">Unassigned</option>
-<option value="link-shortener" <%= tool?.module_key === 'link-shortener' ? 'selected' : '' %>>URL Shortener</option>
+<% if (user.role !== 'contributor') { %><option value="link-shortener" <%= tool?.module_key === 'link-shortener' ? 'selected' : '' %>>URL Shortener</option><% } %>
 </select>
 </label>
 <label class="label">Status<select class="input" name="status">
@@ -62,5 +62,5 @@
 <input type="checkbox" name="featured" <%= tool?.featured ? 'checked' : '' %>>Featured</label>
 <button class="btn">Save tool</button>
 </form>
-</section>
+</section></div>
 <%- include('partials/footer') %>
