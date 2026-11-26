@@ -12,7 +12,7 @@
   ['Legal',[['/legal','Legal and safety'],['/privacy','Privacy · draft'],['/terms','Terms · draft'],['/cookies','Cookies · draft'],['/accessibility','Accessibility']]]
 ]) { %><nav class="footer-column" aria-label="<%= group %>"><span class="eyebrow"><%= group %></span><% for (const [href,label] of links) { %><a href="<%= platformUrl(href) %>"><%= label %></a><% } %></nav><% } %>
 </div>
-<% if (repositoryUrl) { %><div class="footer-bottom"><a class="repository-link" href="<%= repositoryUrl %>" target="_blank" rel="noopener noreferrer" aria-label="Docksite repository on GitHub"><%- include('partials/github') %><span>GitHub</span><%- include('partials/arrow') %></a></div><% } %>
+<% if (repositoryUrl) { %><div class="footer-bottom"><a class="repository-link" href="<%= repositoryUrl %>" target="_blank" rel="noopener noreferrer" aria-label="Docksite repository on GitHub"><%- include('partials/github') %><span>GitHub</span></a></div><% } %>
 </div></footer>
 <% } %>
 </body></html>

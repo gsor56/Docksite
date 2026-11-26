@@ -1,5 +1,10 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
+<% const developer = user.role === 'contributor';
+   const approved = tool?.approved_url && tool.approved_url === tool.external_url;
+   const statuses = [['draft', 'Draft'], ['pending', 'Request review']];
+   if (!developer || approved) statuses.push(['published', 'Published']);
+   if (!developer || tool) statuses.push(['archived', 'Unpublished']); %>
 <div class="form-page"><%- include('partials/page-header', { eyebrow: '', heading: tool ? 'Edit tool' : 'Create tool', ghost: 'tool' }) %>
 <section class="page-section">
 <form class="card stack" method="post" action="<%= basePath %>/tools<%= tool ? '/' + tool.id : '' %>">
@@ -10,7 +15,7 @@
 <input class="input" name="<%= name %>" value="<%= tool?.[name] || '' %>" required maxlength="<%= max %>">
 </label>
 <% } %>
-<label class="label">Description<textarea class="input" name="description" required minlength="10" maxlength="12000">
+<label class="label">Landing page description<textarea class="input" name="description" required minlength="10" maxlength="12000">
 <%= tool?.description || '' %>
 </textarea>
 </label>
@@ -23,17 +28,17 @@
 <% } %>
 </select>
 </label>
-<label class="label">Project URL<input class="input" type="url" name="external_url" value="<%= tool?.external_url || '' %>" maxlength="4096"><span class="muted">An independently hosted working project. Submit as pending for owner review.</span></label>
+<label class="label">Project URL<input class="input" type="url" name="external_url" value="<%= tool?.external_url || '' %>" maxlength="4096"><span class="muted">Use a working, independently hosted URL. A new URL needs owner approval.</span></label>
 <label class="label">Repository URL<input class="input" type="url" name="repository_url" value="<%= tool?.repository_url || '' %>" maxlength="4096"></label>
-<label class="label">Implementation<select class="input" name="module_key">
+<% if (!developer) { %><label class="label">Implementation<select class="input" name="module_key">
 <option value="">Unassigned</option>
-<% if (user.role !== 'contributor') { %><option value="link-shortener" <%= tool?.module_key === 'link-shortener' ? 'selected' : '' %>>URL Shortener</option><% } %>
+<option value="link-shortener" <%= tool?.module_key === 'link-shortener' ? 'selected' : '' %>>URL Shortener</option>
 </select>
-</label>
+</label><% } %>
 <label class="label">Status<select class="input" name="status">
-<% for (const status of user.role === 'contributor' ? ['draft','pending'] : ['draft','pending','published','archived']) { %>
+<% for (const [status, label] of statuses) { %>
 <option value="<%= status %>" <%= tool?.status === status ? 'selected' : '' %>>
-<%= status %>
+<%= label %>
 </option>
 <% } %>
 </select>
@@ -58,8 +63,8 @@
 </label>
 <% } %>
 </fieldset>
-<label class="check-label">
-<input type="checkbox" name="featured" <%= tool?.featured ? 'checked' : '' %>>Featured</label>
+<% if (!developer) { %><label class="check-label">
+<input type="checkbox" name="featured" <%= tool?.featured ? 'checked' : '' %>>Featured</label><% } %>
 <button class="btn">Save tool</button>
 </form>
 </section></div>

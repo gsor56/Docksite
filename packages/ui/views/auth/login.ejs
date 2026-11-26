@@ -8,16 +8,17 @@
     <section class="card stack">
       <h2>Create your owner account</h2>
       <p>The CMS is ready. Create the first owner account to access tools, categories, submissions, users, media, analytics, settings, and the activity log.</p>
-      <a class="btn" href="<%= basePath %>/setup">Set up owner account <%- include('partials/arrow') %></a>
+      <a class="btn" href="<%= basePath %>/setup">Set up owner account</a>
     </section>
     <% } else { %>
     <form method="post" action="<%= basePath %>/login" class="card stack product-card">
       <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <label class="label">Email<input class="input" type="email" name="email" autocomplete="username" required maxlength="254"></label>
       <label class="label">Password<input class="input" type="password" name="password" autocomplete="current-password" required maxlength="200"></label>
-      <button class="btn">Login <%- include('partials/arrow') %></button>
+      <button class="btn">Login</button>
     </form>
     <% } %>
+    <% if (scope === 'cms' && ownerReady) { %><p class="auth-note">Use your Docksite account after your project is approved. <a href="<%= platformUrl('/dashboard') %>">Check project status</a></p><% } %>
     <% if (scope !== 'cms') { %><p class="auth-note"><a href="<%= basePath %>/register">Create an account</a></p><% } %>
   </div>
 </section>

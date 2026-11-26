@@ -1,0 +1,52 @@
+<% const shortener = [...recent, ...featured].find(tool => tool.module_key === 'link-shortener'); %>
+<% const checkCatalog = !shortener && total > recent.length; %>
+<aside class="product-card shortener-preview" id="shortener-preview" aria-label="URL shortener">
+  <% if (shortener) { %>
+    <%- include('shortener-form', { tool: shortener }) %>
+  <% } else { %>
+    <h2>link.docksite</h2>
+    <p>Our first built-in tool is a URL shortener.</p>
+    <p class="shortener-status"<% if (checkCatalog) { %> hidden<% } %>>Coming soon</p>
+  <% } %>
+</aside>
+<% if (checkCatalog) { %>
+  <template id="shortener-form"><%- include('shortener-form', { tool: null }) %></template>
+  <script nonce="<%= nonce %>">
+    (() => {
+      const preview = document.querySelector('#shortener-preview');
+      const isShortener = tool => tool?.module_key === 'link-shortener';
+
+      async function findShortener() {
+        const listing = await fetch('/api/tools/url-shortener');
+        if (listing.ok) {
+          const tool = await listing.json();
+          if (isShortener(tool)) return tool;
+        } else if (listing.status !== 404) {
+          throw new Error('Could not check shortener availability.');
+        }
+        for (let page = 1; ; page++) {
+          const response = await fetch('/api/tools?limit=100&page=' + page);
+          if (!response.ok) throw new Error('Could not check shortener availability.');
+          const { tools, total, limit } = await response.json();
+          const tool = tools.find(isShortener);
+          if (tool || page * limit >= total) return tool;
+        }
+      }
+
+      findShortener().then(tool => {
+        if (!tool) {
+          preview.querySelector('.shortener-status').hidden = false;
+          return;
+        }
+        const content = document.querySelector('#shortener-form').content.cloneNode(true);
+        const address = new URL(tool.url);
+        const mount = '/t/' + encodeURIComponent(tool.subdomain);
+        content.querySelector('h2').textContent = address.host + (address.pathname === '/' ? '' : address.pathname);
+        const form = content.querySelector('form');
+        if (form) form.action = mount + '/links';
+        else content.querySelector('a').href = mount + '/login';
+        preview.replaceChildren(content);
+      }).catch(() => {});
+    })();
+  </script>
+<% } %>

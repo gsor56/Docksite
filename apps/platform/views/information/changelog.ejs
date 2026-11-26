@@ -3,7 +3,7 @@
 <%- include('partials/page-header',{eyebrow:'Product',heading:'Changelog',subline:description,ghost:'releases'}) %>
 <section class="page-section" data-reveal>
 <% if (!releases.length) { %><%- include('partials/empty-state',{heading:'No releases published yet.',message:'Public release notes will appear here after staff publish them.',actionHref:'/features',actionLabel:'Explore current features'}) %><% } else { %>
-<div class="stack release-list"><% for (const release of releases) { %><article class="card"><p class="metadata"><% if (release.version) { %><span class="tag"><%= release.version %></span><% } %> Published <%= date(release.published_at) %></p><h2><a href="/changelog/<%= release.slug %>"><%= release.title %></a></h2><p><%= release.summary %></p><a class="tool-open" href="/changelog/<%= release.slug %>">Read release note <%- include('partials/arrow') %></a></article><% } %></div>
+<div class="stack release-list"><% for (const release of releases) { %><article class="card"><p class="metadata"><% if (release.version) { %><span class="tag"><%= release.version %></span><% } %> Published <%= date(release.published_at) %></p><h2><a href="/changelog/<%= release.slug %>"><%= release.title %></a></h2><p><%= release.summary %></p><a class="tool-open" href="/changelog/<%= release.slug %>">Read release note</a></article><% } %></div>
 <% } %>
 </section>
 <%- include('partials/footer') %>

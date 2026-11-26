@@ -56,7 +56,7 @@ Only configure real DNS/reverse proxy/HTTPS after authorization and provider cap
 
 ## Volunteer review and email configuration
 
-Use the submission form to send a project or an idea privately. CMS contributors can submit an owned tool as pending. Only the owner approves externally hosted projects. Publication/notification state must be real and never inferred from button clicks.
+Use the submission form to send a project or idea privately. Owner approval grants CMS access and prepares a contributor-owned draft. The developer can edit and publish that draft. Additional tools and changed destinations return to review. Keep access checks in the shared auth and tool repository code.
 
 The application .env supports:
 

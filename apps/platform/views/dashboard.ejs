@@ -2,12 +2,34 @@
 <%- include('partials/header') %>
 <%- include('partials/page-header', { eyebrow: 'Account', heading: 'Dashboard', subline: 'Signed in as ' + user.username, ghost: 'account' }) %>
 <section class="page-section" data-reveal>
-  <div class="card account-summary"><div><p><strong><%= user.username %></strong></p></div><div class="btn-row account-actions"><% if (shortener) { %><a class="btn btn-secondary btn-small" href="<%= shortener.url + '/dashboard' %>">My short links (<%= links %>) <%- include('partials/arrow') %></a><% } %><a class="btn btn-small" href="/build">Submit a project <%- include('partials/arrow') %></a><% if (['owner','admin','contributor'].includes(user.role)) { %><a class="btn btn-secondary btn-small" href="<%= cmsUrl('/dashboard') %>">Open CMS <%- include('partials/arrow') %></a><% } %></div></div>
+  <div class="card account-summary">
+    <div><p><strong><%= user.username %></strong></p></div>
+    <div class="btn-row account-actions">
+      <% if (shortener) { %><a class="btn btn-secondary btn-small" href="<%= shortener.url + '/dashboard' %>">My short links (<%= links %>)</a><% } %>
+      <a class="btn btn-small" href="/build">Submit a project</a>
+      <% if (cmsReady) { %><a class="btn btn-secondary btn-small" href="<%= cmsUrl(user.role === 'contributor' ? '/tools' : '/dashboard') %>">Open CMS</a><% } %>
+    </div>
+  </div>
   <div class="section-heading"><h2>My submissions</h2></div>
   <% if (!submissions.length) { %>
     <%- include('partials/empty-state', { heading: 'You have not submitted any projects.', message: '', actionHref: '/build', actionLabel: 'Submit a project' }) %>
   <% } else { %>
-    <div class="table-wrap"><table class="table"><thead><tr><th>Title</th><th>Status</th><th>Review note</th><th>Created</th></tr></thead><tbody><% for (const submission of submissions) { %><tr><td><%= submission.title %></td><td><span class="status-badge status-<%= submission.status %>"><%= submission.status %></span></td><td><%= submission.review_note || 'Awaiting review' %></td><td><%= date(submission.created_at) %></td></tr><% } %></tbody></table></div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>Title</th><th>Status</th><th>Review note</th><th>Created</th><th>Tool</th></tr></thead>
+        <tbody>
+          <% for (const submission of submissions) { %>
+          <tr>
+            <td><%= submission.title %></td>
+            <td><span class="status-badge status-<%= submission.status %>"><%= submission.status %></span></td>
+            <td><%= submission.review_note || (submission.status === 'pending' ? 'Awaiting review' : '—') %></td>
+            <td><%= date(submission.created_at) %></td>
+            <td><% if (cmsReady && submission.tool_status && submission.status === 'approved') { %><a href="<%= cmsUrl('/tools/' + submission.tool_id) %>">Manage in CMS</a><% } else { %>—<% } %></td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
   <% } %>
 </section>
 <%- include('partials/footer') %>

@@ -1,0 +1,13 @@
+<% const address = tool ? new URL(tool.url) : null; %>
+<% const mount = tool ? '/t/' + encodeURIComponent(tool.subdomain) : ''; %>
+<h2><%= address?.host %><%= address && address.pathname !== '/' ? address.pathname : '' %></h2>
+<% if (user) { %>
+  <form class="shortener-form" method="post" action="<%= mount %>/links">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="hidden" name="is_active" value="on">
+    <label class="label">URL to shorten<input class="input" type="url" name="destination_url" required maxlength="4096" placeholder="https://example.com"></label>
+    <button class="btn btn-small">Shorten</button>
+  </form>
+<% } else { %>
+  <p><a href="<%= mount %>/login">Log in</a> to shorten a URL.</p>
+<% } %>

@@ -25,8 +25,8 @@ EJS sources live in packages/ui/views/partials. packages/ui/index.js loads the l
 | --font                    | Poppins, system-ui, sans-serif                                               |
 | --display-font            | Instrument Serif, Georgia, serif                                             |
 | --mono                    | ui-monospace, SFMono-Regular, Consolas, monospace, inherited from global.css |
-| --radius                  | 28px                                                                         |
-| --input-radius            | 14px                                                                         |
+| --radius                  | 12px                                                                         |
+| --input-radius            | Inherits --radius                                                            |
 | --pill-radius             | 999px                                                                        |
 | --card-padding            | 40px; 28px below 768px                                                       |
 | --section-space           | 120px; 72px below 768px                                                      |
@@ -36,13 +36,13 @@ EJS sources live in packages/ui/views/partials. packages/ui/index.js loads the l
 
 global.css also defines --space-1 through --space-5: .25rem, .5rem, 1rem, 1.5rem, 2rem. Reuse existing component spacing rather than inventing a second token system.
 
-CMS overrides: background #000, surface #111, text #f5f5f5, muted #aaa, divider #2d2d2d, tints #142340/#35251f/#131313, radius 14px, padding 28px, section space 64px, card border 1px #343434. CMS display font is Poppins, with monospace navigation/labels.
+CMS overrides: background #000, surface #111, text #f5f5f5, muted #aaa, divider #2d2d2d, tints #142340/#35251f/#131313, padding 28px, section space 64px, card border 1px #343434. CMS display font is Poppins, with monospace navigation/labels.
 
 ## Typography
 
 Body: Poppins 17px/1.5; weights 400/500/600 are hosted locally. Public H1/H2 use Instrument Serif 400, tracking -.03em, line-height .98, balanced wrapping.
 
-- Hero H1: clamp(56px, 8vw, 120px), line-height .95.
+- Hero H1: clamp(52px, 6.6vw, 96px), line-height .98, with a mobile override.
 - Inner H1: clamp(48px, 6vw, 88px).
 - Section H2: clamp(40px, 4.5vw, 64px).
 - Information section H2: clamp(32px, 3vw, 44px).
@@ -58,23 +58,23 @@ CMS page H1: Poppins 600, clamp(32px, 4vw, 48px), line-height 1.1. Its ghost wor
 
 .container is at most 1200px with 48px total horizontal gutter on desktop; mobile rules tighten the gutter. .main has no extra padding. .section uses section-space above/below; .page-section uses it below. .page-header uses 88px top and 72px bottom on desktop, with mobile overrides.
 
-.grid has three equal minmax columns and 24px gap, falling to one on small screens. .tool-detail-layout uses 1.7fr/1fr and a 72px gap. .form-page is a centered narrow form wrapper. .auth-layout splits panel/form and stacks on mobile.
+.grid has three equal minmax columns and 24px gap, falling to one on small screens. The tool directory uses four columns on desktop and 16px gaps. The homepage gives the hero more space than its directory grid and builder band. .tool-detail-layout uses 1.7fr/1fr and a 72px gap. .form-page is a centered narrow form wrapper. .auth-layout splits panel/form and stacks on mobile.
 
 .reading-width is max 760px. .information-layout is max 960px. Information paragraphs use 1.8 line-height and pre-line whitespace. .prose-section separates topics by 56px, 40px on mobile. Do not place dense policy prose in three-column cards.
 
 ## Buttons and links
 
-.btn is a pill: 66px minimum height, 20px 32px padding, Poppins 600 18px, blue with white text. .btn-secondary is outlined and transparent; hover fills the text color with white foreground. .btn-small is 46px minimum, 12px 22px, 15px text. CMS buttons use its existing compact overrides.
+.btn uses 12px corners, a 66px minimum height, 20px 32px padding, Poppins 600 18px, and white text on blue. The navigation submission CTA and homepage Browse tools button use pill corners. .btn-secondary is outlined and transparent and fills on hover. .btn-small is 46px minimum, 12px 22px, 15px text. CMS buttons use compact overrides.
 
-.arrow is trusted inline SVG and nudges 4px on hover. .btn-row wraps controls with a 16px gap. Forms use full-width primary pills.
+The Browse tools arrow is trusted inline SVG and nudges 4px on hover. .btn-row wraps controls with a 16px gap. Forms use full-width submit buttons.
 
 Body links retain a 1.5px underline and 3px offset; hover turns the underline blue. Nav, buttons and card headline links intentionally remove the underline. Do not leave default browser controls.
 
 ## Forms, cards and tables
 
-.input: 56px minimum height, 1.5px border, 14px radius, 15px 18px padding. textarea min-height 160px. Labels sit above inputs; supporting .muted text is smaller. Selects use a small inline SVG chevron. Shared checkbox/file styles occur later in design.css.
+.input uses a 56px minimum height, 1.5px border, 12px radius and 15px 18px padding. textarea min-height 160px. Labels sit above inputs and supporting .muted text is smaller. Selects use a small inline SVG chevron. Shared checkbox/file styles occur later in design.css.
 
-.card: outlined, rounded, padded; the grid cycles blue/sand/gray via nth-child. Grid-card hover translates up 4px without shadow. .tool-card has a bottom action area and wraps long data. .tag/.status-badge are small pills; publication/draft/rejection use the existing status tint selectors.
+.card is outlined, rounded and padded. The general grid cycles blue, sand and gray via nth-child. Directory cards use a white surface with tinted icons, monospace addresses and a 3px hover lift. .tag/.status-badge use rounded rectangular corners and existing state tints.
 
 .table-wrap scrolls horizontally and contains the table. Row dividers are 1px --border. Never let a wide table expand the whole page. .resource-url wraps long report resources. Do not invent health indicators for the status page.
 
@@ -84,13 +84,13 @@ partials/header.ejs supplies a skip link, trusted lockup, concise desktop nav an
 
 nav-links.ejs has scope-aware navigation and a staff Manage disclosure. Do not put every public page in the header.
 
-footer.ejs groups Product, Resources, Developers and Legal. The public footer has a large serif wordmark; CMS uses its sans override. Footer is four columns, two below 768px including at 360px. Links must resolve to real routes. A bottom repository-link row uses the trusted inline github.ejs icon and configured repository URL; it is omitted when no URL is configured.
+library-footer.ejs groups Product, Platform, Legal and Open source beside the brand and directory description. It links to the configured source and ends with the serif wordmark. The footer has four columns and uses two below 768px. CMS keeps its sans override and its existing resources.
 
 ## Decorative typography and motion
 
-page-header.ejs accepts heading, optional eyebrow/subline and ghost. Ghost words are absolute, cropped, opacity .045, pointer-events none and aria-hidden. Content stays above the background. Hero ghost is 35vw; inner ghosts use clamp(160px, 26vw, 400px).
+page-header.ejs accepts a heading, optional eyebrow and subline, and either a ghost word or the compact Subdomain Stack. These backgrounds are clipped, pointer-events none and aria-hidden. The homepage uses the full Subdomain Stack on the right behind the plain shortener preview.
 
-apps/platform/views/partials/subdomain-stack.ejs is purely decorative. Its example text is not a tool catalog. Rows use display serif, 4% black prefixes/3% suffixes, one blue active layer and a CSS opacity mask. layout.js handles capped horizontal parallax and six-second tint cycling, pauses when hidden and honors reduced motion. No images/canvas or visible gradient fills.
+packages/ui/views/partials/subdomain-stack.ejs renders decorative address rows. Rows use display serif, 4% black prefixes, 3% suffixes, one blue active layer and a CSS opacity mask. layout.js handles capped horizontal parallax and six-second tint cycling, pauses when hidden and honors reduced motion.
 
 Sections with data-reveal fade up 16px over 400ms after IntersectionObserver enhancement. They are visible without JavaScript. Reduced motion disables animation/reveals/parallax/cycling and keeps a static active row.
 

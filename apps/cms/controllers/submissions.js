@@ -14,6 +14,7 @@ export function review(req, res) {
     z.object({
       status: z.enum(['approved', 'rejected']),
       review_note: z.string().trim().max(2000).default(''),
+      project_url: z.string().default(''),
     }),
     req.body,
   );

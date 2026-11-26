@@ -48,7 +48,7 @@ export function informationPages() {
         section(
           'Who can take part',
           [
-            'People can create personal or contributor accounts. Volunteers can submit a working project or propose a tool idea. The owner reviews submissions before external projects appear in the public directory.',
+            'Sign up to submit a working project or suggest a tool. The owner reviews projects before developers can publish them in the directory.',
           ],
           [],
           [link('Contribute', '/contribute')],
@@ -71,7 +71,7 @@ export function informationPages() {
         [],
         [
           'Create an account, sign in and view your own submissions.',
-          'Submit a real project URL or an idea for owner review. Contributor accounts also have a limited CMS workspace.',
+          'Submit a working project URL or an idea for owner review. Project approval unlocks a CMS workspace for your own tools.',
           'Staff manage tool metadata, categories, tags, media and recorded events in the CMS.',
         ],
       ),
@@ -122,14 +122,14 @@ export function informationPages() {
       section(
         'Submit a project',
         [
-          'Register a contributor account, then use the submission form to describe your project and provide its real URL. A repository URL is optional. Ideas can also be submitted without a project URL.',
+          'Sign in on Docksite and submit a working project URL. You can include a repository link or leave the project URL blank to suggest an idea.',
         ],
         [],
         [link('Create account', '/register'), link('Submit a project', '/build')],
       ),
       section('Manual review', [
-        'Submissions stay private until the owner reviews them. Approval of a working external project creates a published directory entry; an approved idea alone does not create a working tool. Review notes appear in your dashboard.',
-        'Contributor CMS accounts manage their own drafts and media. They cannot publish projects or manage other people’s accounts.',
+        'Your dashboard shows the review decision. When the owner approves a working project, open the CMS link, edit the landing page and publish it.',
+        'Developers can add, edit and unpublish their own listings. New tools and project URLs go through owner review.',
       ]),
       section(
         'Code contributions',
@@ -602,7 +602,8 @@ export const helpArticles = {
       [link('Submit a project', '/build')],
     ),
     section('Review', [
-      'The submission is stored privately and a review notice is queued for the owner. Email is not sent until SMTP is configured. You can see review notes in your dashboard. The owner decides whether to approve or reject; an approved real project becomes a directory entry. No approval time is promised.',
+      'The owner reviews the submission privately. Check your dashboard for the decision. An approved project gets a CMS link so you can edit the landing page and publish it.',
+      'Use the same account to sign in to the CMS. An idea without a working URL stays a submission.',
     ]),
   ]),
   'reporting-issues': page('Reporting issues', 'Choose the channel that actually exists.', [
@@ -657,7 +658,8 @@ export const docArticles = {
     'A listing and an executable tool are different things.',
     [
       section('External projects', [
-        'A volunteer can submit a URL to a real independently hosted project. The owner reviews it and can publish its directory metadata. Docksite does not deploy or execute an external project merely by listing it.',
+        'Submit a URL to an independently hosted project. Owner approval lets you publish and maintain its landing page in the CMS.',
+        'Published tools appear in the directory. A configured Docksite subdomain redirects visitors to the hosted project.',
       ]),
       section(
         'Built-in modules',

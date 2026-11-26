@@ -4,7 +4,7 @@ import { recordActivity } from './activity.js';
 export const findUser = (id) =>
   db
     .prepare(
-      'SELECT id, username, email, role, is_active, created_at, updated_at FROM users WHERE id = ?',
+      'SELECT id, username, email, role, is_active, created_at, updated_at, developer_approved_at FROM users WHERE id = ?',
     )
     .get(id);
 export const loginUser = (email) => db.prepare('SELECT * FROM users WHERE email = ?').get(email);
@@ -22,6 +22,12 @@ export const allUsers = () =>
   db
     .prepare('SELECT id, username, email, role, is_active, created_at FROM users ORDER BY id DESC')
     .all();
+export function grantDeveloperAccess(id) {
+  const timestamp = now();
+  db.prepare(
+    "UPDATE users SET role='contributor', developer_approved_at=COALESCE(developer_approved_at,?), updated_at=? WHERE id=? AND role IN ('user','contributor')",
+  ).run(timestamp, timestamp, id);
+}
 export function updateUser(actor, id, role, active) {
   return db.transaction(() => {
     const user = findUser(id);
@@ -38,12 +44,14 @@ export function updateUser(actor, id, role, active) {
         .count <= 1
     )
       throw Object.assign(new Error('The last active owner must remain enabled.'), { status: 409 });
-    db.prepare('UPDATE users SET role = ?, is_active = ?, updated_at = ? WHERE id = ?').run(
-      role,
-      active ? 1 : 0,
-      now(),
-      id,
-    );
+    const timestamp = now();
+    const approval =
+      role === 'contributor'
+        ? user.developer_approved_at || (actor.role === 'owner' ? timestamp : null)
+        : null;
+    db.prepare(
+      'UPDATE users SET role=?, is_active=?, updated_at=?, developer_approved_at=? WHERE id=?',
+    ).run(role, active ? 1 : 0, timestamp, approval, id);
     recordActivity(actor.id, 'user.update', 'user', id, { role, active });
   })();
 }

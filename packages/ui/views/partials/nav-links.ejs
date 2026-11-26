@@ -6,11 +6,11 @@
   <% } else if (scope === 'link') { %>
     <a class="nav-link" href="<%= basePath %>/">Shortener</a><% if (user) { %><a class="nav-link" href="<%= basePath %>/dashboard">My links</a><% } %><a class="nav-link" href="<%= platformUrl('/tools') %>">Directory</a>
   <% } else { %>
-    <a class="nav-link" href="<%= basePath %>/tools">Tools <%- include('partials/chevron') %></a><a class="nav-link" href="<%= basePath %>/categories">Categories <%- include('partials/chevron') %></a><% if (user) { %><a class="nav-link" href="<%= basePath %>/dashboard">Dashboard</a><% } %>
+    <a class="nav-link" href="<%= basePath %>/tools">Tools</a><a class="nav-link" href="<%= basePath %>/categories">Categories</a><% if (user) { %><a class="nav-link" href="<%= basePath %>/dashboard">Dashboard</a><% } %>
   <% } %>
 </div>
 <div class="nav-account">
   <% if (scope === 'platform') { %><a class="nav-search" href="<%= platformUrl('/tools#tool-search') %>" aria-label="Search tools"><%- include('partials/icons', { icon: 'search' }) %></a><% } %>
-  <% if (user) { %><form action="<%= basePath %>/logout" method="post" class="inline-form"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="text-button">Log out</button></form><% } else { %><a class="nav-link" href="<%= basePath %>/login">Login</a><% if (true) { %><a class="btn btn-secondary btn-small" href="<%= basePath %>/register">Register</a><% } %><% } %>
-  <% if (scope === 'platform') { %><a class="btn btn-small" href="<%= basePath %>/build">Submit a project <%- include('partials/arrow') %></a><% } %>
+  <% if (user) { %><form action="<%= basePath %>/logout" method="post" class="inline-form"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="text-button">Log out</button></form><% } else { %><a class="nav-link" href="<%= basePath %>/login">Login</a><a class="btn btn-secondary btn-small" href="<%= scope === 'cms' ? platformUrl('/register') : basePath + '/register' %>">Register</a><% } %>
+  <% if (scope === 'platform') { %><a class="btn btn-small nav-cta" href="<%= basePath %>/build">Submit a project</a><% } %>
 </div>

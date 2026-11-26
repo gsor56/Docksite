@@ -3,7 +3,7 @@
     <div class="library-footer-top">
       <div class="library-footer-brand">
         <a class="brand" href="<%= platformUrl('/') %>" aria-label="<%= platformName %> homepage"><%- logo %></a>
-        <p>A directory of independent web tools.</p>
+        <p>A directory of independent web tools, with a page for each project.</p>
       </div>
       <div class="footer-grid">
         <% for (const [group, links] of [
@@ -18,8 +18,15 @@
         <% } %>
         <nav class="footer-column" aria-label="Open source">
           <strong>Open source</strong>
-          <% if (repositoryUrl) { %><a class="repository-link" href="<%= repositoryUrl %>" aria-label="Docksite source repository"><%- include('partials/github') %> GitHub</a><% } %>
-          <span>MIT licensed</span>
+          <% if (repositoryUrl) { %>
+            <% const onGitHub = /^https?:\/\/(?:www\.)?github\.com\//i.test(repositoryUrl); %>
+            <a class="repository-link" href="<%= repositoryUrl %>">
+              <% if (onGitHub) { %><%- include('partials/github') %><% } %>
+              <span><%= onGitHub ? 'MIT licensed, source on GitHub' : 'MIT-licensed source code' %></span>
+            </a>
+          <% } else { %>
+            <span>MIT licensed</span>
+          <% } %>
         </nav>
       </div>
     </div>

@@ -6,16 +6,16 @@ Docksite connects independently identifiable tools through a dynamic directory, 
 
 - Three independently runnable Express apps: platform, CMS and URL shortener.
 - SQLite-backed tools, accounts, sessions, categories/tags, private submissions, analytics, media, releases and abuse reports.
-- Safe volunteer signup, owner-approved projects and a durable SMTP review outbox.
+- Public developer signup, owner-approved CMS publishing and a durable SMTP review outbox.
 - Product, help and public developer pages; draft legal policies and labeled coming-soon features.
 - Shared editorial Instrument Serif/Poppins design. Black developer CMS with the white Docksite lockup.
 - No seeded users, tools, release notes or usage events.
 
 ## Public library layout
 
-- The homepage uses the Docksite serif and Poppins type, ink and blue palette, pill controls, and the right-aligned Subdomain Stack. Shared UI lives in `packages/ui/views/partials` and its tokens are in `packages/ui/public/design.css`.
-- The hero search submits to `/tools`. Counts and category tiles use the existing SQLite-backed page data. Popular tools use `/api/tools?sort=popular&limit=4` with category filters. Dashed slots link to the project form.
-- The URL Shortener preview is a coming-soon card while the tool is in development. Publishing a tool, reviewing submissions and managing content happen in the CMS.
+- The homepage groups a two-column hero, tool directory, compact project submission band and shared footer. It uses the Docksite serif and Poppins type, ink and blue palette, and the right-aligned Subdomain Stack. Shared UI lives in `packages/ui/views/partials` and its tokens are in `packages/ui/public/design.css`.
+- The hero invites people to browse tools, with project submission as a text link. The shortener preview shows `link.docksite` and its coming-soon state until the built-in module is published. Published listings enable the existing shortener form for signed-in users.
+- Directory cards show their configured addresses in monospace. Category filters use the published catalog API. Empty directories use a plain message, and positive counts appear on directory pages. Search is available at `/tools` and from the navigation.
 - Tools, Categories, tool details, project submission, Login and Register reuse the lighter Subdomain Stack header and public footer. Visitors can register and submit from the library. Signed-in CMS users can find the technical guides under **Developer resources**.
 - Keep future layout work in EJS views and partials, the shared CSS, and small vanilla JavaScript enhancements in the views. The existing Express routes and SQLite data drive the pages.
 
@@ -46,9 +46,26 @@ Open http://localhost:3001/setup or http://localhost:3000/cms/setup. Direct loca
 
 Alternatively set OWNER_USERNAME, OWNER_EMAIL and OWNER_PASSWORD privately and run npm run setup:owner. Clear OWNER_PASSWORD and SETUP_TOKEN afterward.
 
-The database starts without tools. In CMS Tools, create the actual URL Shortener record: slug url-shortener, subdomain link, Implementation URL Shortener, status published. Describe its real features. Until published, shortener routes intentionally return 404.
+The database starts without tools. When the URL Shortener is ready, the owner can register it in CMS Tools with slug `url-shortener`, subdomain `link`, implementation **URL Shortener** and status **Published**. Until then, the shortener routes return 404.
 
-Anyone can register a personal or contributor account. CMS signup creates contributors. The submission form accepts working project URLs or ideas. Only the owner approves projects; approved ideas alone do not create usable tools.
+## Publish an external tool
+
+1. Create an account in the main app and submit an independently hosted working project at `/build`.
+2. The owner approves the request in **CMS → Submissions**. Approval creates a draft and adds a **Manage in CMS** link to the developer's main dashboard.
+3. Sign in to the CMS with the same account. Edit the tool's name, tagline and landing page description, then select **Publish tool**. Docksite adds its card and `/tools/:slug` landing page to the public library.
+4. Use **My tools** to add projects, update listings, or unpublish and delete owned tools. A new tool or destination URL requires owner review.
+
+Ideas stay private. Submit a separate request when the working project is ready. Developers keep CMS access after removing a listing. The owner can revoke account access in **Users**.
+
+Docksite reserves a unique slug and tool address on approval. In local path mode, `/t/:subdomain` redirects to the published project. After buying `docksite.tech`, configure wildcard DNS and HTTPS, then set `BASE_DOMAIN=docksite.tech`, `URL_MODE=subdomain` and `URL_SCHEME=https`. Published tools then use addresses such as `name.docksite.tech`. [Deployment instructions](DEPLOYMENT.md)
+
+## Crawler discovery
+
+`/sitemap.xml` and `/llms.txt` list public indexable pages, including published tool pages, categories and releases. `/robots.txt` allows every user agent to crawl the site. `/humans.txt` describes the project and credits its source. `/robot.txt` and `/human.txt` redirect to the standard names.
+
+Private routes still require authentication. Draft policies, coming-soon pages and private pages keep their existing indexing rules.
+
+Use the full deployment hostname when testing crawler access. Docksite serves its own crawler rules alongside its public pages.
 
 ## Run apps
 
@@ -58,7 +75,9 @@ npm run dev --workspace @docksite/cms
 npm run dev --workspace @docksite/link-shortener
 ```
 
-Use npm start --workspace with the same workspace names for non-watch execution. npm run dev starts all three; npm run start:all starts all without watch. npm start starts the platform with optional path mounts. There is no build step. Every listener binds to 0.0.0.0.
+Use npm start --workspace with the same workspace names for non-watch execution. npm run dev starts all three and npm run start:all runs all three without watch. The platform startup file is `index.js` in the project root. `npm start` runs that entry point and applies pending migrations before it serves the platform and its mounts. Every listener binds to 0.0.0.0.
+
+For Bot-Hosting.net, use the Node.js deployment type, choose Node 24 and set **Startup → Entry File** to `index.js`. The platform uses the assigned `SERVER_PORT`. Begin with the provider's managed HTTPS subdomain and path mode. [Hosting instructions](DEPLOYMENT.md)
 
 | Surface         | Local URL                       |
 | --------------- | ------------------------------- |

@@ -65,26 +65,28 @@ Working = implemented behavior; informational = truthful maintained copy; draft 
 | /api/tools/:slug          | Published JSON detail                                                  | platform/routes/api.js, controllers/tools.js                                          | working       | Public GET                                        | SQLite                                                     | Not in sitemap                                   | Invalid 422; unknown/unpublished 404                                                                                                       |
 | /api/tools/:slug/share    | POST share event                                                       | platform/routes/api.js, controllers/tools.js                                          | working       | Same-origin CSRF; no login required               | SQLite events                                              | No public page                                   | 30 per configured window                                                                                                                   |
 | /sitemap.xml              | Generated public URLs                                                  | platform/controllers/seo.js                                                           | working       | Public                                            | Catalog/SQLite                                             | Includes only eligible content                   | Update on launches                                                                                                                         |
-| /robots.txt               | Crawler guidance                                                       | platform/controllers/seo.js                                                           | working       | Public                                            | Configured origin                                          | Public                                           | Not access control                                                                                                                         |
+| /robots.txt, /robot.txt   | Crawl policy or redirect to the standard name                          | platform/controllers/seo.js and routes/seo.js                                         | working       | Public                                            | All user agents allowed                                    | Announces the sitemap                            | Keep the configured origin current                                                                                                         |
+| /humans.txt, /human.txt   | Project and source credits                                             | platform/controllers/seo.js and routes/seo.js                                         | working       | Public                                            | Platform settings and verified stack                       | Public text                                      | Maintain source settings                                                                                                                   |
+| /llms.txt                 | Public page inventory for LLM clients                                  | platform/controllers/seo.js                                                           | working       | Public                                            | Same public entries as sitemap.xml                         | Public text                                      | Update alongside crawlable routes                                                                                                          |
 | Unknown path              | Real 404/error presentation                                            | ui/index.js finishApp → ui/views/errors/                                              | working       | Public outside private gates                      | Actual request errors                                      | noindex                                          | No fake success                                                                                                                            |
 
 ## CMS
 
-CMS URLs are on localhost:3001 or prefixed /cms on the platform. Auth/register/setup routes precede cmsAccess; all management pages use noindex and private/no-store headers. Writes require CSRF and rate limits.
+CMS URLs are on localhost:3001 or prefixed /cms on the platform. Management pages require CMS access and use noindex and no-store headers. Writes use CSRF and rate limits.
 
-| URL                                                                          | Purpose/source | Access | Content/state | Remaining work |
-| ---------------------------------------------------------------------------- | -------------- | ------ | ------------- | -------------- |
-| '+[url,source,access,content,'Maintain permissions and real records'].join(' | ')+'           |
-| '+[url,source,access,content,'Maintain permissions and real records'].join(' | ')+'           |
-| '+[url,source,access,content,'Maintain permissions and real records'].join(' | ')+'           |
-| '+[url,source,access,content,'Maintain permissions and real records'].join(' | ')+'           |
-| '+[url,source,access,content,'Maintain permissions and real records'].join(' | ')+'           |
-| '+[url,source,access,content,'Maintain permissions and real records'].join(' | ')+'           |
-| '+[url,source,access,content,'Maintain permissions and real records'].join(' | ')+'           |
-| '+[url,source,access,content,'Maintain permissions and real records'].join(' | ')+'           |
-| '+[url,source,access,content,'Maintain permissions and real records'].join(' | ')+'           |
-| '+[url,source,access,content,'Maintain permissions and real records'].join(' | ')+'           |
-| '+[url,source,access,content,'Maintain permissions and real records'].join(' | ')+'           |
+| URL                                                            | Purpose                                                 | Access                                                        |
+| -------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------- |
+| /login, POST /logout                                           | CMS session with the main Docksite account              | Approved developers or staff                                  |
+| /register                                                      | Redirects to platform signup                            | Public                                                        |
+| /setup                                                         | First-owner creation                                    | Setup challenge before the first owner exists                 |
+| /dashboard                                                     | CMS overview                                            | Approved developers or staff                                  |
+| /tools, /tools/new, /tools/:id, /tools/:id/edit                | Owned tool drafts, landing pages and assigned addresses | Approved developers for their own tools, or staff             |
+| POST /tools/:id/publish, /tools/:id/archive, /tools/:id/delete | Publish, unpublish or remove a listing                  | Owned tools for developers. Publication requires URL approval |
+| /submissions, POST /submissions/:id/review                     | Private requests and decisions                          | Staff inbox. Owner review                                     |
+| /categories, /tags                                             | Tool taxonomy                                           | Staff                                                         |
+| /media                                                         | Private media                                           | Approved developers for owned media, or staff                 |
+| /users, /settings, /analytics, /activity                       | Users, settings and reporting                           | Staff                                                         |
+| /releases, /reports                                            | Release notes and private abuse reports                 | Staff                                                         |
 
 Reports show the latest 200 records; analytics/activity are also recent-record views. SMTP is currently unconfigured; notices remain queued. Reported URLs are text, never fetched.
 

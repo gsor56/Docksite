@@ -4,62 +4,22 @@
   <div class="hero-background" aria-hidden="true"><%- include('partials/subdomain-stack', { compact: false }) %></div>
   <div class="product-hero-grid">
     <div class="hero-copy">
-      <p class="hero-badge">Free directory. No clutter.</p>
-      <h1><%= platformName %></h1>
-      <p class="hero-subline">A directory of standalone web tools and services.</p>
-      <form class="product-search" action="/tools" method="get" role="search" aria-label="Tool directory">
-        <button type="submit" aria-label="Search tools"><%- include('partials/icons', { icon: 'search' }) %></button>
-        <label class="sr-only" for="home-tool-search">Search tools</label>
-        <input id="home-tool-search" type="search" name="search" placeholder="Search tools..." maxlength="200">
-      </form>
-      <div class="btn-row"><a class="btn" href="/tools">Browse tools <%- include('partials/arrow') %></a><a class="btn btn-secondary" href="/build">Submit a tool idea <%- include('partials/arrow') %></a></div>
-      <ul class="hero-benefits" aria-label="About the directory">
-        <% for (const benefit of ['Free to browse', 'No install', 'Independent tools']) { %>
-          <li><%- include('partials/icons', { icon: 'check' }) %><%= benefit %></li>
-        <% } %>
-      </ul>
-    </div>
-    <aside class="product-preview">
-      <div class="product-card preview-card">
-        <span class="product-icon"><%- include('partials/icons', { icon: 'link' }) %></span>
-        <h2><%= total ? 'URL Shortener' : 'First tool arriving soon' %></h2>
-        <p>The URL Shortener is in development.</p>
+      <h1>Small tools, each with its own address.</h1>
+      <p class="hero-subline">Find independent web tools in an open-source directory.</p>
+      <div class="btn-row">
+        <a class="btn btn-small hero-primary" href="/tools">Browse tools <%- include('partials/arrow') %></a>
+        <a class="hero-submit" href="/build">Submit a project</a>
       </div>
-    </aside>
+    </div>
+    <%- include('partials/shortener-preview') %>
   </div>
 </section>
-<ul class="product-stats" aria-label="Docksite directory at a glance">
-  <li><strong><%= total %></strong> published <%= total === 1 ? 'tool' : 'tools' %></li>
-  <li><strong><%= categories.length %></strong> <%= categories.length === 1 ? 'category' : 'categories' %></li>
-  <% if (repositoryUrl) { %><li><a href="<%= repositoryUrl %>"><%- include('partials/github') %> Open source <%- include('partials/arrow') %></a></li><% } %>
-</ul>
 <%- include('partials/popular-tools') %>
-<section class="product-section" aria-labelledby="how-it-works" data-reveal>
-  <div class="section-heading"><h2 id="how-it-works">How it works</h2></div>
-  <ol class="product-steps">
-    <% for (const [index, [heading, copy, icon]] of [
-      ['Find a tool', 'Search the directory or browse by category.', 'search'],
-      ['Open the tool', 'Follow the link to the tool from its listing.', 'open'],
-      ['Use it in your browser', 'Sign in on the tool page if it asks.', 'check']
-    ].entries()) { %>
-      <li class="product-card">
-        <div class="product-step-top"><span class="product-step-number"><%= index + 1 %></span><%- include('partials/icons', { icon }) %></div>
-        <h3><%= heading %></h3>
-        <p><%= copy %></p>
-      </li>
-    <% } %>
-  </ol>
-</section>
 <section class="product-builder" aria-labelledby="for-builders" data-reveal>
   <div>
-    <h2 id="for-builders">Built a tool? Dock it here.</h2>
-    <p>Submit your project for review and a place in the directory.</p>
-    <a class="btn" href="/build">Submit a project <%- include('partials/arrow') %></a>
+    <h2 id="for-builders">List a tool you built</h2>
+    <p>Send a working URL for review. If approved, you can publish and edit its page in the CMS.</p>
   </div>
-  <%- include('partials/dock-mark') %>
-</section>
-<section class="product-section" aria-labelledby="home-categories" data-reveal>
-  <div class="section-heading"><h2 id="home-categories">Categories</h2><% if (categories.length) { %><a class="tool-open" href="/categories">View all <%- include('partials/arrow') %></a><% } %></div>
-  <%- include('partials/category-tiles') %>
+  <a class="btn btn-small" href="/build">Submit a project</a>
 </section>
 <%- include('partials/footer') %>

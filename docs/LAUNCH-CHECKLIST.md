@@ -1,6 +1,6 @@
 # Public-launch checklist
 
-This is a list of unresolved work, not a deployment or compliance certificate. Pages can exist before their feature is launched. No DNS, Wispbyte or remote change is authorized by this document.
+These are the open checks for public launch. A page can exist while its feature is still in development.
 
 ## Operator and policies
 
@@ -30,7 +30,7 @@ This is a list of unresolved work, not a deployment or compliance certificate. P
 
 - [ ] Obtain the real provided development domain; later obtain the intended owned .tech domain.
 - [ ] Verify DPDNS subdomain/wildcard and certificate capabilities; keep path mode if unavailable.
-- [ ] Inspect authorized Wispbyte Node/runtime/storage/process capabilities before choosing topology.
+- [ ] Confirm the Bot-Hosting Node.js runtime, assigned port, persistent storage and managed HTTPS hostname.
 - [ ] Use a supported runtime and verify the native SQLite binary/compiler requirements.
 - [ ] Confirm persistent DATABASE_PATH/UPLOAD_DIR on one host; do not use ephemeral SQLite storage.
 - [ ] Establish consistent SQLite backups, upload backups, restore drills and backup retention.
@@ -52,7 +52,7 @@ This is a list of unresolved work, not a deployment or compliance certificate. P
 - [ ] Finish local tests/lint/format/browser checks and inspect Git changes for secrets/data.
 - [ ] Obtain permission for any commit/push or other remote action outside the current local task.
 - [ ] Configure DPDNS only after a real hostname and authorization.
-- [ ] Connect/deploy to Wispbyte only when authorized.
+- [ ] Verify Docksite's homepage, CMS login and sitemap on the managed Bot-Hosting HTTPS hostname.
 - [ ] Repeat verification after switching to the owned .tech hostname; retained short URLs require an explicit transition plan.
 
 See [DEPLOYMENT](../DEPLOYMENT.md) for the staged workflow and [HANDOFF](HANDOFF.md) for actual local checks.

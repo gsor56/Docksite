@@ -9,6 +9,10 @@
   },
   "private": true,
   "type": "module",
+  "allowScripts": {
+    "bcrypt@6.0.0": true,
+    "better-sqlite3@12.11.1": true
+  },
   "engines": {
     "node": "^20.19.0 || ^22.13.0 || >=24"
   },
@@ -21,7 +25,7 @@
   "scripts": {
     "install": "node scripts/check-runtime.js",
     "dev": "node scripts/run-apps.js --watch",
-    "start": "npm start --workspace @docksite/platform",
+    "start": "node index.js",
     "start:all": "node scripts/run-apps.js",
     "migrate": "node packages/db/migrate.js",
     "configure": "node scripts/configure.js",

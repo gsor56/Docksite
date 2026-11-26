@@ -169,6 +169,7 @@ CREATE TABLE "tools" (
   updated_at TEXT NOT NULL,
   external_url TEXT,
   repository_url TEXT,
+  approved_url TEXT,
   CHECK (status != 'published' OR module_key IS NOT NULL OR external_url IS NOT NULL),
   CHECK (module_key IS NULL OR external_url IS NULL)
 );
@@ -181,7 +182,8 @@ CREATE TABLE users (
   role TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('owner', 'admin', 'contributor', 'user')),
   is_active INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0, 1)),
   created_at TEXT NOT NULL,
-  updated_at TEXT NOT NULL
+  updated_at TEXT NOT NULL,
+  developer_approved_at TEXT
 );
 
 CREATE INDEX activity_created ON activity_log(created_at DESC);

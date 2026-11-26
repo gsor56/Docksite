@@ -21,11 +21,12 @@
 <p class="prose">
 <%= submission.idea %>
 </p>
-<% if (user.role === 'owner') { %><form class="stack" method="post" action="<%= basePath %>/submissions/<%= submission.id %>/review">
+<% if (user.role === 'owner' && submission.status !== 'rejected') { %><form class="stack" method="post" action="<%= basePath %>/submissions/<%= submission.id %>/review">
 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<input type="hidden" name="project_url" value="<%= submission.project_url || '' %>">
 <label class="label">Decision<select class="input" name="status">
-<option value="approved">Approve</option>
-<option value="rejected" <%= submission.status === 'rejected' ? 'selected' : '' %>>Reject</option>
+<% if (submission.status === 'pending') { %><option value="approved"><%= submission.project_url ? 'Approve project for publishing' : 'Approve idea' %></option><% } %>
+<option value="rejected"><%= submission.status === 'approved' ? 'Withdraw approval' : 'Reject' %></option>
 </select>
 </label>
 <label class="label">Review note<textarea class="input" name="review_note" maxlength="2000">

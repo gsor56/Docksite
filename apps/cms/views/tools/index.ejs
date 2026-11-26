@@ -1,9 +1,9 @@
 <%- include('partials/head') %>
 <%- include('partials/header') %>
-<%- include('partials/page-header', { eyebrow: '', heading: 'Tools', ghost: 'tools' }) %>
-<p><a class="btn" href="<%= basePath %>/tools/new">Create tool</a></p>
+<%- include('partials/page-header', { heading: user.role === 'contributor' ? 'My tools' : 'Tools', ghost: 'tools' }) %>
+<% if (tools.length) { %><p><a class="btn" href="<%= basePath %>/tools/new">Add tool</a></p><% } %>
 <% if (!tools.length) { %>
-<%- include('partials/empty-state', { heading: 'No tools created yet. The URL Shortener module is implemented and can be registered here.', message: '', actionHref: basePath + '/tools/new', actionLabel: 'Create tool' }) %>
+<%- include('partials/empty-state', { heading: 'No tools yet.', message: '', actionHref: basePath + '/tools/new', actionLabel: 'Add tool' }) %>
 <% } else { %>
 <div class="table-wrap">
 <table class="table">
@@ -33,6 +33,7 @@
 <span class="status-badge status-<%= tool.status %>">
 <%= tool.status %>
 </span>
+<% if (tool.status === 'draft' && tool.approved_url && tool.approved_url === tool.external_url) { %><span class="metadata">Ready to publish</span><% } %>
 </td>
 <td>
 <code>

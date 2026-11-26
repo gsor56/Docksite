@@ -52,7 +52,12 @@ export function migrate() {
 export function requireSchema() {
   if (
     !db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'releases'").get() ||
-    !db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'email_outbox'").get()
+    !db
+      .prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'email_outbox'")
+      .get() ||
+    !db
+      .prepare("SELECT 1 FROM pragma_table_info('users') WHERE name = 'developer_approved_at'")
+      .get()
   ) {
     throw new Error('Database is not migrated. Run npm run migrate.');
   }

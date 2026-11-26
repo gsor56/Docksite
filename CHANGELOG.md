@@ -2,7 +2,17 @@
 
 This records local implementation work, not public product releases. Public release notes are CMS-managed database records visible at /changelog only after publication. No historical releases are fabricated.
 
-## Current local changes — 2026-11-25
+## 2026-11-26
+
+- Moved the platform startup to root index.js and added Bot-Hosting.net assigned-port support.
+- Approved the pinned native dependency install scripts for npm 12 hosting.
+- Owner approval now grants developer CMS access and prepares a draft. Developers edit, publish and unpublish their own approved tools.
+- Added configured tool subdomain URLs and preserved the local path redirects.
+- Added robots.txt, humans.txt and llms.txt alongside the dynamic sitemap.
+- Condensed the homepage into a tool-first hero, directory, project submission band and footer. The shortener preview responds to the module's publication state.
+- Simplified shared controls and cards to 12px corners and kept the homepage arrow on Browse tools.
+
+## 2026-11-25
 
 - Extended the editorial design across platform/shortener; applied the black CMS and white lockup.
 - Added Subdomain Stack typography with reduced-motion and hidden-tab handling.

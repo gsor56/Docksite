@@ -12,8 +12,9 @@
         <label class="label">Username<input class="input" name="username" autocomplete="username" required minlength="3" maxlength="32" pattern="[a-zA-Z0-9_-]+"></label>
         <label class="label">Email<input class="input" type="email" name="email" autocomplete="email" required maxlength="254"></label>
         <label class="label">Password<input class="input" type="password" name="password" autocomplete="new-password" required minlength="12" maxlength="72"><span class="muted">At least 12 characters; at most 72 UTF-8 bytes.</span></label>
-        <% if (scope !== 'cms') { %><label class="label">Account type<select class="input" name="account_type"><option value="contributor">Volunteer / project contributor</option><option value="user">Personal account</option></select></label><% } else { %><p>Contributor accounts can submit projects. Publication requires owner approval.</p><% } %>
-        <button class="btn">Create account <%- include('partials/arrow') %></button>
+        <label class="label">Account type<select class="input" name="account_type"><option value="contributor">Developer</option><option value="user">Personal account</option></select></label>
+        <% if (scope === 'platform') { %><p class="muted">Approved developers can publish from the CMS.</p><% } %>
+        <button class="btn">Create account</button>
       </form>
     <% } %>
   </div>

@@ -2,7 +2,7 @@ import { before, after, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:net';
 import nodemailer from 'nodemailer';
-import { prepareEnvironment, Client } from './helpers.js';
+import { prepareEnvironment, Client, hostRequest } from './helpers.js';
 
 let environment, db, config, publicClient, owner, volunteer, admin, submissionId;
 const servers = [];
@@ -48,8 +48,8 @@ before(async () => {
     ).status,
     302,
   );
-  admin = new Client(owner.base);
-  await admin.post('/register', {
+  const staffAccount = new Client(publicClient.base);
+  await staffAccount.post('/register', {
     username: 'staffer',
     email: 'staffer@localhost.test',
     password,
@@ -57,6 +57,11 @@ before(async () => {
   });
   const staff = db.prepare("SELECT id FROM users WHERE username='staffer'").get();
   await owner.post('/users/' + staff.id, { role: 'admin', is_active: 'on' });
+  admin = new Client(owner.base);
+  assert.equal(
+    (await admin.post('/login', { email: 'staffer@localhost.test', password })).status,
+    302,
+  );
 });
 after(async () => {
   for (const server of servers)
@@ -113,7 +118,35 @@ test('all information routes, help articles, metadata and footer links resolve',
   assert.equal((await publicClient.request('/docs/unknown')).status, 404);
 });
 
-test('project submissions stay private and require owner publication', async () => {
+test('crawler files list public canonical pages and allow every user agent', async () => {
+  const robots = await publicClient.request('/robots.txt');
+  assert.match(robots.headers.get('content-type'), /^text\/plain/);
+  assert.equal(
+    await robots.text(),
+    'User-agent: *\nAllow: /\nSitemap: ' + publicClient.base + '/sitemap.xml\n',
+  );
+  assert.match(await (await publicClient.request('/humans.txt')).text(), /Express, EJS and SQLite/);
+  for (const [alias, canonical] of [
+    ['/robot.txt', '/robots.txt'],
+    ['/human.txt', '/humans.txt'],
+  ]) {
+    const response = await publicClient.request(alias);
+    assert.equal(response.status, 301);
+    assert.equal(response.headers.get('location'), canonical);
+  }
+  const llms = await (await publicClient.request('/llms.txt')).text();
+  const sitemap = await (await publicClient.request('/sitemap.xml')).text();
+  for (const path of ['/tools', '/categories', '/report-abuse', '/help']) {
+    assert(sitemap.includes('<loc>' + publicClient.base + path + '</loc>'));
+    assert(llms.includes('(' + publicClient.base + path + ')'));
+  }
+  for (const path of ['/dashboard', '/cms', '/privacy', '/login', '/build']) {
+    assert(!sitemap.includes('<loc>' + publicClient.base + path + '</loc>'));
+    assert(!llms.includes('(' + publicClient.base + path + ')'));
+  }
+});
+
+test('owner approval grants CMS access and lets the developer publish an owned listing', async () => {
   assert.equal(
     db.prepare("SELECT role FROM users WHERE username='volunteer'").get().role,
     'contributor',
@@ -154,6 +187,16 @@ test('project submissions stay private and require owner publication', async () 
   const submission = db.prepare('SELECT * FROM tool_submissions').get();
   submissionId = submission.id;
   assert.equal(submission.status, 'pending');
+  const contributor = new Client(owner.base);
+  assert.equal(
+    (await contributor.request('/register')).headers.get('location'),
+    publicClient.base + '/register',
+  );
+  assert.equal(
+    (await contributor.post('/login', { email: 'volunteer@localhost.test', password })).status,
+    403,
+  );
+  assert.doesNotMatch(await (await volunteer.request('/dashboard')).text(), /Open CMS/);
   assert.equal((await (await publicClient.request('/api/tools')).json()).total, 0);
   assert.equal(
     db.prepare('SELECT recipient FROM email_outbox').get().recipient,
@@ -167,22 +210,49 @@ test('project submissions stay private and require owner publication', async () 
     (
       await owner.post('/submissions/' + submissionId + '/review', {
         status: 'approved',
+        project_url: submission.project_url,
         review_note: 'Reviewed working destination.',
       })
     ).status,
     302,
   );
   const tool = db.prepare('SELECT * FROM tools').get();
-  assert.equal(tool.status, 'published');
+  assert.equal(tool.slug, 'real-submitted-project');
+  assert.equal(tool.subdomain, tool.slug);
+  assert.equal(tool.status, 'draft');
   assert.equal(tool.owner_id, submission.submitted_by);
+  assert.equal(tool.approved_url, submission.project_url);
+  assert.equal((await publicClient.request('/tools/' + tool.slug)).status, 404);
+  assert.doesNotMatch(
+    await (await publicClient.request('/sitemap.xml')).text(),
+    /real-submitted-project/,
+  );
+  const dashboard = await (await volunteer.request('/dashboard')).text();
+  assert(dashboard.includes(owner.base + '/tools/' + tool.id));
+  assert.match(dashboard, /Manage in CMS/);
+  assert.equal(
+    (await contributor.post('/login', { email: 'volunteer@localhost.test', password })).status,
+    302,
+  );
+  assert.match(await (await contributor.request('/tools/' + tool.id)).text(), /Publish tool/);
+  assert.equal(
+    (await contributor.post('/tools/' + tool.id + '/publish', {}, '/tools/' + tool.id)).status,
+    302,
+  );
   const api = await (await publicClient.request('/api/tools/' + tool.slug)).json();
   assert.equal(api.url, 'http://127.0.0.1:1/project');
+  assert.equal(api.approved_url, undefined);
   assert.equal(
     (await publicClient.request('/t/' + tool.subdomain)).headers.get('location'),
     api.url,
   );
   const landing = await (await publicClient.request('/tools/' + tool.slug)).text();
   assert(landing.includes(api.url));
+  assert(
+    (await (await publicClient.request('/sitemap.xml')).text()).includes('/tools/' + tool.slug),
+  );
+  assert((await (await publicClient.request('/llms.txt')).text()).includes('/tools/' + tool.slug));
+  assert.match(await (await publicClient.request('/')).text(), /Your tool could be here/);
   assert.equal(
     (
       await owner.post('/submissions/' + submissionId + '/review', {
@@ -193,9 +263,13 @@ test('project submissions stay private and require owner publication', async () 
     302,
   );
   assert.equal((await publicClient.request('/api/tools/' + tool.slug)).status, 404);
+  assert.equal(
+    (await contributor.post('/tools/' + tool.id + '/publish', {}, '/tools/' + tool.id)).status,
+    403,
+  );
 });
 
-test('CMS contributors can submit their own external project but cannot publish or inspect staff inboxes', async () => {
+test('developers maintain approved tools and request review of a changed destination', async () => {
   const contributor = new Client(owner.base);
   assert.equal(
     (await contributor.post('/login', { email: 'volunteer@localhost.test', password })).status,
@@ -221,14 +295,78 @@ test('CMS contributors can submit their own external project but cannot publish 
   for (const url of ['/submissions', '/reports', '/releases', '/users', '/settings'])
     assert.equal((await contributor.request(url)).status, 403, url);
   assert.equal(
-    (await owner.post('/submissions/' + submission.id + '/review', { status: 'approved' })).status,
+    (
+      await owner.post('/submissions/' + submission.id + '/review', {
+        status: 'approved',
+        project_url: data.external_url,
+      })
+    ).status,
     302,
   );
-  assert.equal(db.prepare('SELECT status FROM tools WHERE id=?').get(tool.id).status, 'published');
+  assert.equal(db.prepare('SELECT status FROM tools WHERE id=?').get(tool.id).status, 'draft');
   assert.equal(
     (await admin.post('/tools/' + tool.id, { ...data, status: 'published' })).status,
     403,
   );
+  const listing = {
+    ...data,
+    status: 'published',
+    description: 'The developer wrote this public landing page description.',
+  };
+  assert.equal((await contributor.post('/tools/' + tool.id, listing)).status, 302);
+  assert.match(
+    await (await publicClient.request('/tools/' + tool.slug)).text(),
+    /The developer wrote this public landing page description/,
+  );
+
+  config.URL_MODE = 'subdomain';
+  try {
+    const api = await (await publicClient.request('/api/tools/' + tool.slug)).json();
+    const host = tool.subdomain + '.localhost:' + config.PORT;
+    assert.equal(api.url, 'http://' + host + '/');
+    const redirect = await hostRequest(publicClient.base, host);
+    assert.equal(redirect.status, 302);
+    assert.equal(redirect.location, data.external_url);
+  } finally {
+    config.URL_MODE = 'path';
+  }
+
+  const moved = { ...listing, external_url: 'http://127.0.0.1:1/updated-project' };
+  assert.equal((await contributor.post('/tools/' + tool.id, moved)).status, 403);
+  assert.equal(
+    (await contributor.post('/tools/' + tool.id, { ...moved, status: 'pending' })).status,
+    302,
+  );
+  assert.equal((await publicClient.request('/api/tools/' + tool.slug)).status, 404);
+  assert.equal(
+    (
+      await owner.post('/submissions/' + submission.id + '/review', {
+        status: 'approved',
+        project_url: data.external_url,
+      })
+    ).status,
+    409,
+  );
+  assert.equal(
+    (
+      await owner.post('/submissions/' + submission.id + '/review', {
+        status: 'approved',
+        project_url: moved.external_url,
+      })
+    ).status,
+    302,
+  );
+  const cmsTool = '/tools/' + tool.id;
+  assert.equal((await contributor.post(cmsTool + '/publish', {}, cmsTool)).status, 302);
+  assert.equal(
+    (await (await publicClient.request('/api/tools/' + tool.slug)).json()).url,
+    moved.external_url,
+  );
+  assert.equal((await contributor.post(cmsTool + '/archive', {}, cmsTool)).status, 302);
+  assert.equal((await publicClient.request('/tools/' + tool.slug)).status, 404);
+  assert.equal((await contributor.post(cmsTool + '/publish', {}, cmsTool)).status, 302);
+  assert.equal((await contributor.post(cmsTool + '/delete', {}, cmsTool)).status, 302);
+  assert.equal((await contributor.request('/tools')).status, 200);
 });
 
 test('release drafts are private, publication is real, and bodies are escaped', async () => {

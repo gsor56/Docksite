@@ -14,7 +14,7 @@
         <% for (const paragraph of section.paragraphs || []) { %><p class="information-prose"><%= paragraph %></p><% } %>
         <% if (section.items?.length) { %><ul><% for (const item of section.items) { %><li><%= item %></li><% } %></ul><% } %>
         <% if (section.code) { %><pre class="code-block"><code><%= section.code %></code></pre><% } %>
-        <% if (section.links?.length) { %><div class="information-links"><% for (const link of section.links) { %><a href="<%= link.href %>" <%= link.href.startsWith('https://') ? 'rel=noopener' : '' %>><%= link.label %> <%- include('partials/arrow') %></a><% } %></div><% } %>
+        <% if (section.links?.length) { %><div class="information-links"><% for (const link of section.links) { %><a href="<%= link.href %>" <%= link.href.startsWith('https://') ? 'rel=noopener' : '' %>><%= link.label %></a><% } %></div><% } %>
       </section>
     <% } %>
     </div>

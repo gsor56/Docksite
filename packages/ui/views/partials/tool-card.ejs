@@ -9,6 +9,6 @@
   <% if (!isPreview && tool.tags.length) { %><div class="tags"><% for (const tag of tool.tags) { %><span class="tag"><%= tag.name %></span><% } %></div><% } %>
   <div class="tool-card-bottom">
     <span class="metadata break"><%= address?.host %><%= address && address.pathname !== '/' ? address.pathname : '' %></span>
-    <% if (!isPreview) { %><a class="tool-open" href="<%= tool.url %>">Open tool <%- include('partials/arrow') %></a><% } %>
+    <% if (!isPreview) { %><a class="tool-open" href="<%= tool.url %>">Open tool</a><% } %>
   </div>
 </article>

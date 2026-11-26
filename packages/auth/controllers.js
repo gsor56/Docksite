@@ -9,6 +9,7 @@ import { parse, registerSchema, loginSchema } from '@docksite/utils/validation';
 import { HttpError } from '@docksite/utils/http';
 import { regenerateSession, saveSession } from './index.js';
 import { isDirectLocalSetup } from './owner-setup.js';
+import { canAccessCms } from './roles.js';
 
 const dummyHash = await bcrypt.hash('invalid-credential-comparison', 12);
 async function signIn(req, user) {
@@ -65,7 +66,7 @@ export function authControllers(scope) {
         const created = insertUser({
           ...data,
           passwordHash,
-          role: scope === 'cms' ? 'contributor' : data.account_type,
+          role: data.account_type,
         });
         recordEvent(null, created.id, 'signup');
         return created;
@@ -77,15 +78,13 @@ export function authControllers(scope) {
       const data = parse(loginSchema, req.body);
       const user = loginUser(data.email);
       const valid = await bcrypt.compare(data.password, user?.password_hash || dummyHash);
-      if (
-        !valid ||
-        !user?.is_active ||
-        (scope === 'cms' && !['owner', 'admin', 'contributor'].includes(user.role))
-      )
-        throw new HttpError(401, 'Email or password is incorrect.');
+      if (!valid || !user?.is_active) throw new HttpError(401, 'Email or password is incorrect.');
+      if (scope === 'cms' && !canAccessCms(user))
+        throw new HttpError(403, 'Your project needs owner approval before you can use the CMS.');
       await signIn(req, user);
       if (scope === 'cms') recordActivity(user.id, 'cms.login', 'user', user.id);
-      res.redirect(`${res.locals.basePath}/dashboard`);
+      const home = scope === 'cms' && user.role === 'contributor' ? '/tools' : '/dashboard';
+      res.redirect(res.locals.basePath + home);
     },
     logout: async (req, res) => {
       await new Promise((resolve, reject) =>

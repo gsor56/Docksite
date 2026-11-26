@@ -171,7 +171,7 @@ test('registration, session regeneration, CSRF, and fresh role checks work', asy
   );
   assert.equal(
     (await new Client(cms).post('/login', { email: 'reader@localhost.test', password })).status,
-    401,
+    403,
   );
   assert.equal((await ownerCms.post('/users/1', { role: 'user', is_active: 'on' })).status, 409);
   assert.equal((await adminCms.post('/users/1', { role: 'user', is_active: 'on' })).status, 403);
@@ -342,6 +342,12 @@ test('submissions, CMS pages, and contributor ownership are enforced', async () 
     db.prepare('SELECT status FROM tool_submissions WHERE id=?').get(submissionId).status,
     'approved',
   );
+  assert.equal(
+    db.prepare("SELECT developer_approved_at FROM users WHERE username='reader'").get()
+      .developer_approved_at,
+    null,
+  );
+  assert.equal((await contributorCms.request(`/tools/${toolId}/edit`)).status, 403);
   const metadata = {
     slug: 'contributor-draft',
     name: 'Contributor draft',
@@ -350,7 +356,7 @@ test('submissions, CMS pages, and contributor ownership are enforced', async () 
     subdomain: 'contributor-draft',
     category_id: '',
     module_key: '',
-    status: 'pending',
+    status: 'draft',
     icon: 'box',
   };
   assert.equal((await contributorCms.post('/tools', metadata)).status, 302);

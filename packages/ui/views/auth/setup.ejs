@@ -9,7 +9,7 @@
       <label class="label">Username<input class="input" name="username" required minlength="3" maxlength="32" pattern="[a-zA-Z0-9_-]+" autocomplete="username"></label>
       <label class="label">Email<input class="input" type="email" name="email" required autocomplete="email"></label>
       <label class="label">Password<input class="input" type="password" name="password" required minlength="12" maxlength="72" autocomplete="new-password"></label>
-      <button class="btn"><%= scope === 'cms' ? 'Create account and open CMS' : 'Create owner' %> <%- include('partials/arrow') %></button>
+      <button class="btn"><%= scope === 'cms' ? 'Create account and open CMS' : 'Create owner' %></button>
     </form>
   </section>
 </div>

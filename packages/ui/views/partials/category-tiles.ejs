@@ -7,8 +7,7 @@
     <% for (const category of categories) { %>
       <a class="category-tile" href="<%= platformUrl('/categories/' + category.slug) %>">
         <%- include('partials/icons', { icon: 'box' }) %>
-        <span><strong><%= category.name %></strong><span class="metadata"><%= category.tool_count %> <%= category.tool_count === 1 ? 'tool' : 'tools' %></span></span>
-        <%- include('partials/arrow') %>
+        <span><strong><%= category.name %></strong><% if (category.tool_count > 0) { %><span class="metadata"><%= category.tool_count %> <%= category.tool_count === 1 ? 'tool' : 'tools' %></span><% } %></span>
       </a>
     <% } %>
   </div>

@@ -1,11 +1,7 @@
 import { spawn } from 'node:child_process';
 import { rootPath } from '@docksite/config';
 
-const applications = [
-  'apps/platform/server.js',
-  'apps/cms/server.js',
-  'apps/tools/link-shortener/server.js',
-];
+const applications = ['index.js', 'apps/cms/server.js', 'apps/tools/link-shortener/server.js'];
 const watch = process.argv.includes('--watch');
 const children = applications.map((file) =>
   spawn(process.execPath, [...(watch ? ['--watch'] : []), file], {

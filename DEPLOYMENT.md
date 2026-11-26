@@ -1,67 +1,41 @@
-# Later deployment workflow
+# Deploy Docksite on Bot-Hosting.net
 
-Deployment is not complete. The current task makes local changes only. The existing source repository is public following the authorized files/history audit. Pending work has not been pushed. Do not create another repository, push, configure DNS or connect to Wispbyte without authorization.
+## Files and startup
 
-## 1. Local verification
+1. Use a Node.js deployment with Node 24. Put the contents of the `toolbox` project in the deployment root so `index.js`, `package.json`, `package-lock.json`, `apps/`, `packages/` and `scripts/` are siblings.
+2. Install from the project's npm lockfile on the host. Use `npm ci --omit=dev` if running the install yourself. The package's pinned script approvals let npm 12 run the native bcrypt and better-sqlite3 installs for the host runtime.
+3. Keep the host's environment and persistent application data in place when updating source files. Exclude Windows `node_modules`, `.git`, the local `.env`, databases, uploads and browser artifacts from file transfers.
+4. Set **Startup → Entry File** (`STARTUP_FILE`) to `index.js`. For a custom start command with dependencies installed, use `node index.js`. The entry point migrates SQLite and binds to `0.0.0.0` on the platform's assigned `SERVER_PORT`. The main app, `/cms` and published tool mounts share that listener.
 
-From toolbox:
+Use the Files tab or SFTP for uploads. The Domains, Startup and power controls are managed from the authenticated panel or Developer API. [Bot-Hosting setup guide](https://bot-hosting.net/docs/guides/set-up-a-deployment)
 
-```powershell
-npm ci
-npm run configure
-npm run migrate
-npm test
-npm run lint
-npm run format:check
-npm run dev
+## The temporary hostname
+
+Activate the provider's managed HTTPS hostname in **Domains** and copy the actual `.apps.bot-hosting.cloud` name from the panel. If using a DPDNS subdomain later, attach the chosen hostname and apply the exact DNS records shown by Bot-Hosting before verifying it. [Bot-Hosting domain guide](https://bot-hosting.net/docs/guides/link-a-domain)
+
+Use the following production settings with the actual hostname. Keep `TRUST_PROXY=1` when one trusted HTTPS ingress fronts the service. Check the forwarded HTTPS protocol and restrict any direct access to that private upstream port.
+
+```dotenv
+NODE_ENV=production
+BASE_DOMAIN=your-actual-hostname.apps.bot-hosting.cloud
+URL_SCHEME=https
+URL_MODE=path
+TRUST_PROXY=1
+DATABASE_PATH=./storage/database.sqlite
+UPLOAD_DIR=./storage/uploads
+REPOSITORY_URL=https://github.com/gsor56/Docksite
 ```
 
-configure preserves existing .env. Check actual tools, auth, owner review, reports, releases and shortener routes using local ports/path mounts. No build step is needed. See README and docs/LAUNCH-CHECKLIST.md.
+Set fresh private values for SESSION_SECRET, CMS_SESSION_SECRET, ANALYTICS_HASH_SECRET and SETUP_TOKEN. `npm run configure` can generate these on the host when there is no existing `.env`. Edit the production settings after generation. Leave the deployment's `SERVER_PORT` in control of the listener. Production public URLs use HTTPS on the managed hostname.
 
-## 2. GitHub after permission
-
-An origin already exists. Inspect it and the pending changes without exposing credentials:
-
-```powershell
-git status
-git remote -v
-git diff --stat
-git check-ignore .env storage/database.sqlite storage/uploads
-```
-
-After the user authorizes the specific update, review/stage appropriate source/docs/assets and commit/push:
-
-```powershell
-git add apps packages scripts tests docs README.md AGENTS.md CHANGELOG.md DEPLOYMENT.md package.json package-lock.json .env.example
-git diff --cached --stat
-git commit -m "Add reviewed projects and platform information pages"
-git push origin main
-```
-
-Never stage the parent workspace .env, credentials, uploads or database. Use a credential manager/GitHub CLI, not tokens in remote URLs or command history. Do not change repository visibility automatically.
-
-## 3. Provided DPDNS hostname
-
-Wait for the actual assigned hostname and permission. Inspect whether the provider supports extra subdomains, wildcard records and certificate validation; do not assume any of them.
-
-Keep URL_MODE=path if wildcard/subdomains are unavailable. Main links use /t/link and /cms. The platform’s simple in-process mounts support this single-process option. Independent CMS/shortener processes also exist for hosts with appropriate port/proxy support.
-
-Set BASE_DOMAIN to the actual hostname without scheme, path or port. Development remains localhost until this phase is authorized.
-
-## 4. Wispbyte when authorized
-
-Inspect the actual Node version, npm installation, native build availability, assigned PORT, persistent storage and restart/process/proxy facilities first. Do not invent server capabilities or run remote commands during local work.
-
-The platform server uses PORT and binds 0.0.0.0. CMS_PORT and LINK_PORT apply to standalone processes. All three apps can run independently, but a host offering one Node process/port can use npm start for the platform’s optional mounts. Do not assume three processes are supported.
-
-Install with npm ci, configure private environment values, run migrations and start only after storage/backups and host settings are verified. Production secrets must be distinct and generated securely. Never upload local .env or development database as source artifacts.
+After startup, verify the public homepage, `/tools`, `/cms/login` and `/sitemap.xml` on that hostname. Open `/cms/setup` over HTTPS to create the real owner using the private setup token if this is a new database. Clear the setup token after owner creation.
 
 ## Environment groups
 
 | Group                | Variables                                                                                              |
 | -------------------- | ------------------------------------------------------------------------------------------------------ |
 | Public URL           | BASE_DOMAIN, URL_MODE, URL_SCHEME, NODE_ENV                                                            |
-| Listener/proxy       | PORT, CMS_PORT, LINK_PORT, TRUST_PROXY                                                                 |
+| Listener/proxy       | SERVER_PORT, PORT, CMS_PORT, LINK_PORT, TRUST_PROXY                                                    |
 | Persistent storage   | DATABASE_PATH, UPLOAD_DIR, UPLOAD_MAX_BYTES                                                            |
 | Sessions             | SESSION_SECRET, CMS_SESSION_SECRET, SESSION_TTL_SECONDS                                                |
 | Owner setup          | SETUP_TOKEN or OWNER_USERNAME/OWNER_EMAIL/OWNER_PASSWORD; clear afterward                              |
@@ -94,9 +68,11 @@ Only when DNS/certificate/proxy capabilities are verified, create the appropriat
 
 The Host foundation handles cms and known published tools. Unknown/unpublished tool hosts return 404. The URL shortener is the only implemented internal module; approved external project hosts/path bridges redirect to their real URL. Do not imply wildcard DNS is currently configured.
 
-## 5. Switch to the owned .tech domain later
+## Switch to the owned .tech domain later
 
 After authorization, configure actual DNS/certificates/proxy and update BASE_DOMAIN, URL_SCHEME and URL_MODE as needed. Restart all processes and verify generated canonicals, Open Graph/JSON-LD URLs, sitemap, cookies, CMS review links and short links.
+
+When you control `docksite.tech`, wildcard DNS and a matching certificate allow the gateway to serve published tool addresses such as `name.docksite.tech`. Set `BASE_DOMAIN=docksite.tech`, `URL_SCHEME=https` and `URL_MODE=subdomain` for that topology. Public tool landing pages remain on the main domain and external tool hosts redirect to the approved projects.
 
 Changing domain does not migrate browser sessions. Existing stored external project/destination URLs remain data; existing outbox message bodies retain the review URL generated when queued. Regenerate obsolete pending notices deliberately if necessary. Keep the old short-link hostname reachable or communicate an actual transition; editing BASE_DOMAIN alone cannot preserve old shared URLs.
 

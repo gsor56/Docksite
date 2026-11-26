@@ -6,7 +6,7 @@
     <a class="tool-address" href="<%= tool.url %>"><%= new URL(tool.url).host %><%= new URL(tool.url).pathname === '/' ? '' : new URL(tool.url).pathname %></a>
     <div class="prose"><%= tool.description %></div>
     <div class="tags"><% if (tool.category) { %><a class="tag" href="/categories/<%= tool.category.slug %>"><%= tool.category.name %></a><% } %><% for (const tag of tool.tags) { %><a class="tag" href="/tools?tag=<%= tag.slug %>"><%= tag.name %></a><% } %></div>
-    <p class="tool-detail-action"><a class="btn" href="<%= tool.url %>">Open <%= tool.name %> <%- include('partials/arrow') %></a></p>
+    <p class="tool-detail-action"><a class="btn" href="<%= tool.url %>">Open <%= tool.name %></a></p>
   </div>
   <aside class="card info-card product-card"><h2>At a glance</h2><dl class="info-list">
     <div><dt>Category</dt><dd><% if (tool.category) { %><a href="/categories/<%= tool.category.slug %>"><%= tool.category.name %></a><% } else { %>Uncategorized<% } %></dd></div>

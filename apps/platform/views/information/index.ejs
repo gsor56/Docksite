@@ -2,7 +2,7 @@
 <%- include('partials/header') %>
 <%- include('partials/page-header',{eyebrow:'Resources',heading:title,subline:description,ghost:title.toLowerCase()}) %>
 <section class="page-section" data-reveal><div class="grid">
-<% for (const [slug,entry] of Object.entries(entries)) { %><article class="card resource-card"><h2><a href="<%= prefix %>/<%= slug %>"><%= entry.title %></a></h2><p><%= entry.description %></p><a class="tool-open" href="<%= prefix %>/<%= slug %>">Read guide <%- include('partials/arrow') %></a></article><% } %>
+<% for (const [slug,entry] of Object.entries(entries)) { %><article class="card resource-card"><h2><a href="<%= prefix %>/<%= slug %>"><%= entry.title %></a></h2><p><%= entry.description %></p><a class="tool-open" href="<%= prefix %>/<%= slug %>">Read guide</a></article><% } %>
 </div></section>
 <%- include('partials/footer') %>
 

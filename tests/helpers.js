@@ -32,6 +32,7 @@ export async function prepareEnvironment() {
     ANALYTICS_HASH_SECRET: 'analytics-test-secret-with-at-least-32-characters',
     SETUP_TOKEN: 'setup-test-token-with-at-least-32-characters',
     PORT: String(await port()),
+    SERVER_PORT: '',
     CMS_PORT: String(await port()),
     LINK_PORT: String(await port()),
     UPLOAD_MAX_BYTES: '1024',
@@ -87,7 +88,11 @@ export function hostRequest(base, host) {
       const chunks = [];
       res.on('data', (chunk) => chunks.push(chunk));
       res.on('end', () =>
-        resolve({ status: res.statusCode, body: Buffer.concat(chunks).toString() }),
+        resolve({
+          status: res.statusCode,
+          body: Buffer.concat(chunks).toString(),
+          location: res.headers.location,
+        }),
       );
     });
     req.on('error', reject);

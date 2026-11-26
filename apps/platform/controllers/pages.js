@@ -4,7 +4,8 @@ import { listTools, linkTool } from '@docksite/db/repositories/tools';
 import { categories, findCategory } from '@docksite/db/repositories/taxonomy';
 import { parse, submissionSchema } from '@docksite/utils/validation';
 import { HttpError } from '@docksite/utils/http';
-import { submitProject } from '@docksite/db/repositories/submissions';
+import { submissionsByUser, submitProject } from '@docksite/db/repositories/submissions';
+import { canAccessCms } from '@docksite/auth/roles';
 
 export function home(req, res) {
   res.render('home', {
@@ -47,11 +48,15 @@ export function submitIdea(req, res) {
   res.redirect('/dashboard');
 }
 export function dashboard(req, res) {
-  const submissions = db
-    .prepare('SELECT * FROM tool_submissions WHERE submitted_by = ? ORDER BY id DESC')
-    .all(req.user.id);
+  const submissions = submissionsByUser(req.user.id);
   const links = db
     .prepare('SELECT COUNT(*) AS total FROM short_links WHERE user_id = ? AND deleted_at IS NULL')
     .get(req.user.id).total;
-  res.render('dashboard', { title: 'Dashboard', submissions, links, shortener: linkTool() });
+  res.render('dashboard', {
+    title: 'Dashboard',
+    submissions,
+    links,
+    shortener: linkTool(),
+    cmsReady: canAccessCms(req.user),
+  });
 }

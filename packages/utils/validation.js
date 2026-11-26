@@ -20,6 +20,12 @@ export const slugSchema = z
   .min(2)
   .max(60)
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+export const subdomainSchema = slugSchema
+  .max(50)
+  .refine(
+    (value) => !['cms', 'www', 'api', 'mail', 'assets'].includes(value),
+    'Reserved subdomain.',
+  );
 export const optionalId = z.preprocess(
   (value) => (value === '' || value == null ? null : value),
   idSchema.nullable(),
@@ -95,17 +101,7 @@ export const toolSchema = z.object({
   tagline: z.string().trim().min(3).max(180),
   description: z.string().trim().min(10).max(12000),
   category_id: optionalId,
-  subdomain: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .min(2)
-    .max(50)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
-    .refine(
-      (value) => !['cms', 'www', 'api', 'mail', 'assets'].includes(value),
-      'Reserved subdomain.',
-    ),
+  subdomain: subdomainSchema,
   module_key: z.preprocess(
     (value) => (value === '' || value == null ? null : value),
     z.literal('link-shortener').nullable(),

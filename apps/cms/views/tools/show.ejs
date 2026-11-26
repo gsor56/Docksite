@@ -10,18 +10,27 @@
 <div class="prose">
 <%= tool.description %>
 </div>
-<p class="metadata">Module: <%= tool.module_key || 'unassigned' %> · Subdomain: <%= tool.subdomain %> · Created <%= date(tool.created_at) %> · Updated <%= date(tool.updated_at) %>
+<p class="metadata break">Tool address: <code><%= toolAddress %></code> · Updated <%= date(tool.updated_at) %>
 </p>
+<% if (tool.status === 'draft' && tool.approved_url && tool.approved_url === tool.external_url) { %>
+<p class="muted">Approved. Edit the landing page or publish it to the directory.</p>
+<% } %>
 <div class="row">
-<a class="btn" href="<%= basePath %>/tools/<%= tool.id %>/edit">Edit</a>
+<a class="btn" href="<%= basePath %>/tools/<%= tool.id %>/edit">Edit landing page</a>
+<% if (['draft','archived'].includes(tool.status) && tool.approved_url && tool.approved_url === tool.external_url) { %>
+<form method="post" action="<%= basePath %>/tools/<%= tool.id %>/publish">
+<input type="hidden" name="_csrf" value="<%= csrfToken %>">
+<button class="btn">Publish tool</button>
+</form>
+<% } %>
 <% if (tool.status === 'published') { %>
-<a class="btn btn-secondary" href="<%= tool.url %>">Open tool</a>
+<a class="btn btn-secondary" href="<%= toolAddress %>">Open tool</a>
 <a href="<%= platformUrl('/tools/' + tool.slug) %>">Public page</a>
 <% } %>
-<% if (['owner','admin'].includes(user.role)) { %>
-<form method="post" action="<%= basePath %>/tools/<%= tool.id %>/archive" data-confirm="Archive this tool and stop its public routes?">
+<% if (tool.status === 'published') { %>
+<form method="post" action="<%= basePath %>/tools/<%= tool.id %>/archive" data-confirm="Remove this tool from the public directory?">
 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-<button class="btn btn-secondary">Archive</button>
+<button class="btn btn-secondary">Unpublish</button>
 </form>
 <% } %>
 <form method="post" action="<%= basePath %>/tools/<%= tool.id %>/delete" data-confirm="Delete this tool? Tools with link records must be archived instead.">

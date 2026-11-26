@@ -54,7 +54,10 @@ const schema = z.object({
   LINK_CREATE_RATE_MAX: integer(30),
 });
 
-const parsed = schema.safeParse(process.env);
+const parsed = schema.safeParse({
+  ...process.env,
+  PORT: process.env.SERVER_PORT || process.env.PORT || undefined,
+});
 if (!parsed.success) {
   throw new Error(
     `Invalid environment: ${parsed.error.issues.map((issue) => issue.path.join('.')).join(', ')}. See .env.example.`,

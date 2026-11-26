@@ -5,7 +5,7 @@ Paths below are relative to toolbox. Read [ARCHITECTURE](ARCHITECTURE.md) for re
 | Change                        | Main files                                                                                                       |
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | Homepage content/layout       | apps/platform/controllers/pages.js, views/home.ejs                                                               |
-| Subdomain Stack               | apps/platform/views/partials/subdomain-stack.ejs, packages/ui/public/design.css, layout.js                       |
+| Subdomain Stack               | packages/ui/views/partials/subdomain-stack.ejs, packages/ui/public/design.css, layout.js                         |
 | Header/footer/nav             | packages/ui/views/partials/header.ejs, footer.ejs, nav-links.ejs                                                 |
 | Current styles/fonts          | packages/ui/public/design.css, global.css, fonts/                                                                |
 | Logo selection/assets         | packages/ui/index.js, packages/ui/assets/                                                                        |
@@ -18,7 +18,8 @@ Paths below are relative to toolbox. Read [ARCHITECTURE](ARCHITECTURE.md) for re
 | Public tool cards/landing     | packages/ui/views/partials/tool-card.ejs, apps/platform/views/tools/                                             |
 | Tool SQL/public serialization | packages/db/repositories/tools.js                                                                                |
 | Build/dashboard               | platform controllers/pages.js and views/build.ejs, dashboard.ejs                                                 |
-| Project review/publication    | packages/db/repositories/submissions.js, cms/controllers/submissions.js                                          |
+| Project review/publication    | packages/db/repositories/submissions.js and tools.js, cms/controllers/submissions.js and tools.js                |
+| Crawler discovery             | apps/platform/controllers/seo.js and routes/seo.js                                                               |
 | SMTP queue                    | packages/utils/review-email.js, platform/server.js, email_outbox migration                                       |
 | Actual shortener              | apps/tools/link-shortener/controllers/links.js, redirects.js; routes/; views/; public/links.js                   |
 | Short-link transactions       | packages/db/repositories/short-links.js                                                                          |

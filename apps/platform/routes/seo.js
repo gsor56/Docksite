@@ -1,6 +1,10 @@
 import { Router } from 'express';
-import { sitemap, robots } from '../controllers/seo.js';
+import { humans, llms, robots, sitemap } from '../controllers/seo.js';
 const router = Router();
 router.get('/sitemap.xml', sitemap);
 router.get('/robots.txt', robots);
+router.get('/humans.txt', humans);
+router.get('/llms.txt', llms);
+router.get('/robot.txt', (req, res) => res.redirect(301, '/robots.txt'));
+router.get('/human.txt', (req, res) => res.redirect(301, '/humans.txt'));
 export default router;
